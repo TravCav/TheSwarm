@@ -116,12 +116,12 @@ function DoTheThings() {
 function DrawGrid() {
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
-  
+
   DoTheThings();
-  
+
   // clear screen
   pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
-  
+
   ////let index = 0;
 
   // draw
@@ -159,23 +159,28 @@ function DrawGrid() {
   }
 
   DrawBrain(population.data.oldestAgeIndex);
-  
+
   ctx.putImageData(pixels, 0, 0);
 
   ctx.font = "10px Arial";
   ctx.fillStyle = "white";
-  ctx.fillText("dot: " + population.data.oldestAgeIndex,90,10);
-
-  const oldDot = population.dots[population.data.oldestAgeIndex];
-  ctx.beginPath();
-  ctx.strokeStyle = "white";
-  ctx.arc(oldDot.x,oldDot.y,50,0,2*Math.PI);
-  ctx.stroke();
+  ctx.fillText("dot: " + population.data.oldestAgeIndex, 90, 10);
+  
+  CircleDot(population.data.oldestAgeIndex, "white", 50);
+  CircleDot(population.data.mostEnergyIndex, "green", 45);
 
   setTimeout(function () {
     DrawGrid();
   }, 1);
   return;
+}
+
+function CircleDot(dotIndex, color, size) {
+  const oldDot = population.dots[dotIndex];
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.arc(oldDot.x, oldDot.y, size, 0, 2 * Math.PI);
+  ctx.stroke();
 }
 
 function DrawBrain(dotIndex) {
@@ -188,7 +193,7 @@ function DrawBrain(dotIndex) {
     const neuronSize = 200 / layer.length;
     for (let neuronIndex = 0; neuronIndex < layer.length; neuronIndex++) {
       const neuronValue = layer[neuronIndex].value;
-      PlaceSquare(Math.floor(layerIndex * layerSize), Math.floor((1+neuronIndex) * neuronSize), {
+      PlaceSquare(Math.floor(layerIndex * layerSize), Math.floor((1 + neuronIndex) * neuronSize), {
         r: (dot.color.r / 2) + (127 * neuronValue),
         g: (dot.color.g / 2) + (127 * neuronValue),
         b: (dot.color.b / 2) + (127 * neuronValue)
@@ -206,8 +211,8 @@ function PlacePixel(x, y, color, d) {
 }
 
 function PlaceSquare(x, y, color, s) {
-  for (let xx = x; xx < x+s; xx++) {
-    for (let yy = y; yy < y+s; yy++) {
+  for (let xx = x; xx < x + s; xx++) {
+    for (let yy = y; yy < y + s; yy++) {
       PlacePixel(xx, yy, color, 0);
     }
   }
