@@ -7,7 +7,7 @@ ctx.canvas.height = window.innerHeight;
 let centerX = ctx.canvas.width / 2;
 let centerY = ctx.canvas.height / 2;
 let pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
-let density = 4000;
+let density = 6000;
 let dotCount = (ctx.canvas.width * ctx.canvas.height) / density;
 
 let population = {
@@ -17,7 +17,9 @@ let population = {
     highestAverage: 0,
     averageAge: 0,
     oldestAge: 0,
-    oldestAgeIndex: 0
+    oldestAgeIndex: 0,
+    mostChildren: 0,
+    mostChildrenIndex: 0
   },
   dots: []
 };
@@ -41,6 +43,7 @@ function DoTheThings() {
   let totalEnergy = 0;
   population.data.oldestAge = 0;
   population.data.mostEnergy = 0;
+  population.data.mostChildren = 0;
 
   for (let i = 0; i < dotCount; i++) {
     totalEnergy += population.dots[i].energy;
@@ -51,6 +54,11 @@ function DoTheThings() {
     if (population.dots[i].energy > population.data.mostEnergy) {
       population.mostEnergyIndex = i;
       population.data.mostEnergy = population.dots[i].energy;
+    }
+
+    if (population.dots[i].children > population.data.mostChildren) {
+      population.mostChildrenIndex = i;
+      population.data.mostChildren = population.dots[i].children;
     }
 
     if (population.dots[i].age > population.data.oldestAge) {
@@ -109,6 +117,7 @@ function DoTheThings() {
       population.dots[dotIndex].vector.y = 0;
       population.dots[dotIndex].energy = 2;
       population.dots[dotIndex].age = 0;
+      population.dots[dotIndex].children = 0;
     }
   }
 }
@@ -159,20 +168,32 @@ function DrawGrid() {
   }
 
   DrawBrain(population.data.oldestAgeIndex);
-
+  
   ctx.putImageData(pixels, 0, 0);
-
+  
   ctx.font = "10px Arial";
   ctx.fillStyle = "white";
   ctx.fillText("dot: " + population.data.oldestAgeIndex, 90, 10);
-  
+  ctx.stroke();
+
+  //ListDetails();
   CircleDot(population.data.oldestAgeIndex, "white", 50);
-  CircleDot(population.data.mostEnergyIndex, "green", 45);
+  CircleDot(population.data.mostChildrenIndex, "green", 45);
 
   setTimeout(function () {
     DrawGrid();
   }, 1);
   return;
+}
+
+function ListDetails() {
+  const oldestDot = population.dots[population.data.oldestAgeIndex];
+  ctx.fillText("children: " + oldestDot.children.toFixed(2), 10, 240);
+  const inputLayer = oldestDot.brain.layers[0];
+  for (let inputIndex = 0; inputIndex < inputLayer.length; inputIndex++) {
+    ctx.fillText("input " + inputIndex + ": " + inputLayer[inputIndex].value.toFixed(2), 10, 260 + (20 * inputIndex));
+  }
+
 }
 
 function CircleDot(dotIndex, color, size) {
@@ -189,7 +210,6 @@ function DrawBrain(dotIndex) {
   const layerSize = 200 / brain.layers.length;
   for (let layerIndex = 1; layerIndex < brain.layers.length; layerIndex++) {
     const layer = brain.layers[layerIndex];
-
     const neuronSize = 200 / layer.length;
     for (let neuronIndex = 0; neuronIndex < layer.length; neuronIndex++) {
       const neuronValue = layer[neuronIndex].value;

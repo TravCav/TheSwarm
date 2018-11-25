@@ -19,6 +19,7 @@ class Dot {
     this.brain = new Brain();
     this.population = [];
     this.consumed = false;
+    this.children = 0;
   }
 
   CheckDots(pop) {
@@ -64,7 +65,11 @@ class Dot {
             this.consumed = true;
             return true;
           } else {
+            this.children++;
             this.energy += this.nearestDot.energy;
+            if (this.energy > 100) {
+              this.energy = 100;
+            }
             return false;
           }
       }
