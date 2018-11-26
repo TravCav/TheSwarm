@@ -169,14 +169,14 @@ function DrawGrid() {
 
   DrawBrain(population.data.oldestAgeIndex, 0);
   DrawBrain(population.data.mostChildrenIndex, 230);
-  
+
   ctx.putImageData(pixels, 0, 0);
-  
+
   //ctx.font = "10px Arial";
   ctx.fillStyle = "white";
   ctx.fillText("oldest: " + population.data.oldestAgeIndex, 20, 10);
-  ctx.fillStyle = "green";
-  ctx.fillText("most children: " + population.data.oldestAgeIndex, 20, 240);
+  ctx.fillStyle = "lightgreen";
+  ctx.fillText("most prolific: " + population.data.mostChildrenIndex, 20, 240);
   ctx.stroke();
 
 
@@ -212,7 +212,7 @@ function DrawBrain(dotIndex, offset) {
   const dot = population.dots[dotIndex];
   const brain = dot.brain;
   const layerSize = 200 / brain.layers.length;
-  for (let layerIndex = 1; layerIndex < brain.layers.length; layerIndex++) {
+  for (let layerIndex = 1; layerIndex < brain.layers.length - 1; layerIndex++) {
     const layer = brain.layers[layerIndex];
     const neuronSize = 200 / layer.length;
     for (let neuronIndex = 0; neuronIndex < layer.length; neuronIndex++) {
@@ -224,6 +224,45 @@ function DrawBrain(dotIndex, offset) {
       }, 10);
     }
   }
+
+  const lastLayer = dot.brain.layers[brain.layers.length - 1];
+  const leftNeuronValue = lastLayer[1].value;
+  const leftColor = {
+    r: (dot.color.r / 2) + (127 * leftNeuronValue),
+    g: (dot.color.g / 2) + (127 * leftNeuronValue),
+    b: (dot.color.b / 2) + (127 * leftNeuronValue)
+  };
+  PlaceSquare(175, 100 + offset, leftColor, 10);
+
+  const rightNeuronValue = lastLayer[0].value;
+  const rightColor = {
+    r: (dot.color.r / 2) + (127 * rightNeuronValue),
+    g: (dot.color.g / 2) + (127 * rightNeuronValue),
+    b: (dot.color.b / 2) + (127 * rightNeuronValue)
+  };
+  PlaceSquare(225, 100 + offset, rightColor, 10);
+
+  const upNeuronValue = lastLayer[3].value;
+  const upColor = {
+    r: (dot.color.r / 2) + (127 * upNeuronValue),
+    g: (dot.color.g / 2) + (127 * upNeuronValue),
+    b: (dot.color.b / 2) + (127 * upNeuronValue)
+  };
+  PlaceSquare(200, 75 + offset, upColor, 10);
+
+  const downNeuronValue = lastLayer[2].value;
+  const downColor = {
+    r: (dot.color.r / 2) + (127 * downNeuronValue),
+    g: (dot.color.g / 2) + (127 * downNeuronValue),
+    b: (dot.color.b / 2) + (127 * downNeuronValue)
+  };
+  PlaceSquare(200, 125 + offset, downColor, 10);
+
+  const xVector = (lastLayer[0].value - lastLayer[1].value) * 3;
+  const yVector = (lastLayer[2].value - lastLayer[3].value) * 3;
+
+  PlaceSquare(Math.floor(dot.vector.x + 200 + 2.5), Math.floor(dot.vector.y + 100 + 2.5 + offset), dot.color, 5);
+
 }
 
 function PlacePixel(x, y, color, d) {
