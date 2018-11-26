@@ -167,14 +167,18 @@ function DrawGrid() {
     }
   }
 
-  DrawBrain(population.data.oldestAgeIndex);
+  DrawBrain(population.data.oldestAgeIndex, 0);
+  DrawBrain(population.data.mostChildrenIndex, 230);
   
   ctx.putImageData(pixels, 0, 0);
   
   ctx.font = "10px Arial";
   ctx.fillStyle = "white";
-  ctx.fillText("dot: " + population.data.oldestAgeIndex, 90, 10);
+  ctx.fillText("oldest: " + population.data.oldestAgeIndex, 20, 10);
+  ctx.fillStyle = "green";
+  ctx.fillText("most children: " + population.data.oldestAgeIndex, 20, 240);
   ctx.stroke();
+
 
   //ListDetails();
   CircleDot(population.data.oldestAgeIndex, "white", 50);
@@ -204,7 +208,7 @@ function CircleDot(dotIndex, color, size) {
   ctx.stroke();
 }
 
-function DrawBrain(dotIndex) {
+function DrawBrain(dotIndex, offset) {
   const dot = population.dots[dotIndex];
   const brain = dot.brain;
   const layerSize = 200 / brain.layers.length;
@@ -213,7 +217,7 @@ function DrawBrain(dotIndex) {
     const neuronSize = 200 / layer.length;
     for (let neuronIndex = 0; neuronIndex < layer.length; neuronIndex++) {
       const neuronValue = layer[neuronIndex].value;
-      PlaceSquare(Math.floor(layerIndex * layerSize), Math.floor((1 + neuronIndex) * neuronSize), {
+      PlaceSquare(Math.floor(layerIndex * layerSize), Math.floor((1 + neuronIndex) * neuronSize + offset), {
         r: (dot.color.r / 2) + (127 * neuronValue),
         g: (dot.color.g / 2) + (127 * neuronValue),
         b: (dot.color.b / 2) + (127 * neuronValue)
