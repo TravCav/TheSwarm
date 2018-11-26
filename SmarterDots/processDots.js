@@ -172,7 +172,7 @@ function DrawGrid() {
   
   ctx.putImageData(pixels, 0, 0);
   
-  ctx.font = "10px Arial";
+  //ctx.font = "10px Arial";
   ctx.fillStyle = "white";
   ctx.fillText("oldest: " + population.data.oldestAgeIndex, 20, 10);
   ctx.fillStyle = "green";
