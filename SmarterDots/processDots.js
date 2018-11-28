@@ -174,7 +174,7 @@ function DrawGrid() {
 
   //ctx.font = "10px Arial";
   ctx.fillStyle = "white";
-  ctx.fillText("oldest: " + population.data.oldestAgeIndex + " - " + population.data.oldestAge, 20, 10);
+  ctx.fillText("oldest: " + population.data.oldestAgeIndex + " - " + population.data.oldestAge , 20, 10);
   ctx.fillStyle = "lightgreen";
   ctx.fillText("most prolific: " + population.data.mostChildrenIndex + " - " + population.data.mostChildren, 20, 240);
   ctx.stroke();
