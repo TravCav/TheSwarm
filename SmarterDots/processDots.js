@@ -28,7 +28,7 @@ function Init() {
   for (let i = 0; i < dotCount; i++) {
     population.dots.push(new Dot());
 
-    if (i < dotCount * 0.90) {
+    if (i < dotCount * 0.90) { //===0) {
       population.dots[i].brain.Restore();
     }
   }
@@ -82,7 +82,7 @@ function DoTheThings() {
 
       let copyDot = population.data.oldestAgeIndex;
       if (Math.random() < 0.5) {
-        copyDot = population.data.mostEnergyIndex;
+        copyDot = population.data.mostChildrenIndex;
       }
 
       // got et
@@ -93,8 +93,14 @@ function DoTheThings() {
         population.dots[dotIndex].CopyColor();
         population.dots[dotIndex].consumed = false;
         do {
-          population.dots[dotIndex].x = population.dots[dotIndex].x + ((Math.random() * 100) - 50);
-          population.dots[dotIndex].y = population.dots[dotIndex].y + ((Math.random() * 100) - 50);
+          // // population.dots[dotIndex].x = population.dots[dotIndex].x + ((Math.random() * 200) - 100);
+          // // population.dots[dotIndex].y = population.dots[dotIndex].y + ((Math.random() * 200) - 100);
+          
+          const r = (Math.random() * 50)+50;
+          const a = Math.random() * 6.28;
+          population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[dotIndex].x);
+          population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[dotIndex].y);
+
         } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
 
       } else {
@@ -107,8 +113,12 @@ function DoTheThings() {
         population.dots[dotIndex].color.g = cDot.color.g;
         population.dots[dotIndex].color.b = cDot.color.b;
 
-        population.dots[dotIndex].x = Math.random() * ctx.canvas.width;
-        population.dots[dotIndex].y = Math.random() * ctx.canvas.height;
+        // population.dots[dotIndex].x = Math.random() * ctx.canvas.width;
+        // population.dots[dotIndex].y = Math.random() * ctx.canvas.height;
+        const r = (Math.random() * 50)+50;
+        const a = Math.random() * 6.28;
+        population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + cDot.x);
+        population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + cDot.y);
       }
 
       population.dots[dotIndex].brain.Mutate();
