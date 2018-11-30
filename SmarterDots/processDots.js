@@ -96,7 +96,7 @@ function DoTheThings() {
           // // population.dots[dotIndex].x = population.dots[dotIndex].x + ((Math.random() * 200) - 100);
           // // population.dots[dotIndex].y = population.dots[dotIndex].y + ((Math.random() * 200) - 100);
           
-          const r = (Math.random() * 50)+50;
+          const r = (Math.random() * 100);
           const a = Math.random() * 6.28;
           population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[dotIndex].x);
           population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[dotIndex].y);
@@ -113,12 +113,12 @@ function DoTheThings() {
         population.dots[dotIndex].color.g = cDot.color.g;
         population.dots[dotIndex].color.b = cDot.color.b;
 
-        // population.dots[dotIndex].x = Math.random() * ctx.canvas.width;
-        // population.dots[dotIndex].y = Math.random() * ctx.canvas.height;
-        const r = (Math.random() * 50)+50;
-        const a = Math.random() * 6.28;
-        population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + cDot.x);
-        population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + cDot.y);
+        population.dots[dotIndex].x = Math.random() * ctx.canvas.width;
+        population.dots[dotIndex].y = Math.random() * ctx.canvas.height;
+        // // const r = (Math.random() * 50)+50;
+        // // const a = Math.random() * 6.28;
+        // // population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + cDot.x);
+        // // population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + cDot.y);
       }
 
       population.dots[dotIndex].brain.Mutate();
