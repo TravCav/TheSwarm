@@ -106,9 +106,9 @@ function DoTheThings() {
         );
 
         let cDot = population.dots[copyDot];
-        population.dots[dotIndex].color.r = cDot.color.r;
-        population.dots[dotIndex].color.g = cDot.color.g;
-        population.dots[dotIndex].color.b = cDot.color.b;
+        //population.dots[dotIndex].color.r = cDot.color.r;
+        //population.dots[dotIndex].color.g = cDot.color.g;
+        //population.dots[dotIndex].color.b = cDot.color.b;
         
         population.dots[dotIndex].x = Math.random() * ctx.canvas.width;
         population.dots[dotIndex].y = Math.random() * ctx.canvas.height;
