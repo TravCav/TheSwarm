@@ -67,9 +67,9 @@ class Dot {
           } else {
             this.children++;
             this.energy += this.nearestDot.energy;
-            if (this.energy > 100) {
-              this.energy = 100;
-            }
+            // if (this.energy > 100) {
+            //   this.energy = 100;
+            // }
             return false;
           }
       }
@@ -95,6 +95,8 @@ class Dot {
 
     const lastVector = Math.sqrt(this.vector.x * this.vector.x + this.vector.y * this.vector.y) / 1000;
     this.energy -= this.tickRate + lastVector;
+    //this.energy -= this.tickRate + (lastVector  * (1 + (this.age/1000))) + (this.age/10000);
+    //this.energy -= this.tickRate + (this.tickRate / this.age) + (lastVector  * (1 + (this.age/1000)));// + (this.age/10000);
     this.age++;
   }
 
@@ -122,6 +124,9 @@ class Dot {
       value: this.brain.layers[lastLayer][3].value
     });
 
+    this.brain.layers[0].push({
+      value: this.age
+    });
     this.brain.layers[0].push({
       value: this.energy
     });

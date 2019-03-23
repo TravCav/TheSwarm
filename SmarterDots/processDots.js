@@ -7,8 +7,8 @@ ctx.canvas.height = window.innerHeight;
 let centerX = ctx.canvas.width / 2;
 let centerY = ctx.canvas.height / 2;
 let pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
-let density = 6000;
-let dotCount = (ctx.canvas.width * ctx.canvas.height) / density;
+let density = 3;
+let dotCount = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
 
 let population = {
   data: {
@@ -81,7 +81,7 @@ function DoTheThings() {
       }
 
       let copyDot = population.data.oldestAgeIndex;
-      if (Math.random() < 0.5) {
+      if (Math.random() < 0.9) {
         copyDot = population.data.mostChildrenIndex;
       }
 
@@ -93,10 +93,7 @@ function DoTheThings() {
         population.dots[dotIndex].CopyColor();
         population.dots[dotIndex].consumed = false;
         do {
-          // // population.dots[dotIndex].x = population.dots[dotIndex].x + ((Math.random() * 200) - 100);
-          // // population.dots[dotIndex].y = population.dots[dotIndex].y + ((Math.random() * 200) - 100);
-          
-          const r = (Math.random() * 100);
+          const r = (Math.random() * 10);
           const a = Math.random() * 6.28;
           population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[dotIndex].x);
           population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[dotIndex].y);
@@ -112,13 +109,9 @@ function DoTheThings() {
         population.dots[dotIndex].color.r = cDot.color.r;
         population.dots[dotIndex].color.g = cDot.color.g;
         population.dots[dotIndex].color.b = cDot.color.b;
-
+        
         population.dots[dotIndex].x = Math.random() * ctx.canvas.width;
         population.dots[dotIndex].y = Math.random() * ctx.canvas.height;
-        // // const r = (Math.random() * 50)+50;
-        // // const a = Math.random() * 6.28;
-        // // population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + cDot.x);
-        // // population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + cDot.y);
       }
 
       population.dots[dotIndex].brain.Mutate();
@@ -169,11 +162,6 @@ function DrawGrid() {
       PlacePixel(x, y + 1, population.dots[i].color, 0);
       PlacePixel(x + 1, y + 1, population.dots[i].color, 64);
 
-      // // for (let xx = x - dotSize; xx <= x + dotSize; xx++) {
-      // //   for (let yy = y - dotSize; yy <= y + dotSize; yy++) {
-      // //     PlacePixel(xx, yy, population.dots[i].color);
-      // //   }
-      // // }
     }
   }
 
@@ -184,9 +172,9 @@ function DrawGrid() {
 
   //ctx.font = "10px Arial";
   ctx.fillStyle = "white";
-  ctx.fillText("oldest: " + population.data.oldestAgeIndex + " - " + population.data.oldestAge , 20, 10);
+  ctx.fillText("oldest: " + population.data.oldestAgeIndex + " - " + population.data.oldestAge + " - " + population.dots[population.data.oldestAgeIndex].energy , 20, 10);
   ctx.fillStyle = "lightgreen";
-  ctx.fillText("most prolific: " + population.data.mostChildrenIndex + " - " + population.data.mostChildren, 20, 240);
+  ctx.fillText("most prolific: " + population.data.mostChildrenIndex + " - " + population.data.mostChildren + " - " + population.dots[population.data.mostChildrenIndex].energy, 20, 240);
   ctx.stroke();
 
 
