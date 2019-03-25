@@ -7,7 +7,7 @@ ctx.canvas.height = window.innerHeight;
 let centerX = ctx.canvas.width / 2;
 let centerY = ctx.canvas.height / 2;
 let pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
-let density = 1;
+let density = 4;
 let dotCount = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
 
 let population = {
@@ -90,7 +90,7 @@ function DoTheThings() {
         population.dots[dotIndex].CopyColor(population.dots[dotIndex].nearestDot);
         population.dots[dotIndex].consumed = false;
         do {
-          const r = (Math.random() * 100);
+          const r = (Math.random() * 50);
           const a = Math.random() * 6.28;
           population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[dotIndex].x);
           population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[dotIndex].y);
@@ -122,7 +122,7 @@ function DoTheThings() {
         // population.dots[dotIndex].y = Math.random() * ctx.canvas.height;
 
         do {
-          const r = (Math.random() * 100);
+          const r = (Math.random() * 50);
           const a = Math.random() * 6.28;
           population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[copyDot].x);
           population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[copyDot].y);
@@ -196,8 +196,8 @@ function DrawGrid() {
 
 
   //ListDetails();
-  CircleDot(population.data.oldestAgeIndex, "white", 50);
-  CircleDot(population.data.mostChildrenIndex, "green", 45);
+  CircleDot(population.data.oldestAgeIndex, "white", 25);
+  CircleDot(population.data.mostChildrenIndex, "green", 20);
 
   setTimeout(function () {
     DrawGrid();

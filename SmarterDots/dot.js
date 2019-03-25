@@ -59,7 +59,7 @@ class Dot {
       const dx = this.x - this.nearestDot.x;
       const dy = this.y - this.nearestDot.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < 5) {
+      if (distance < 1) {
           if (this.energy < this.nearestDot.energy) {
             this.energy = -2;
             this.consumed = true;
@@ -137,7 +137,7 @@ class Dot {
       value: this.vector.y
     });
 
-    if ( this.GetDistance(this.nearestDot) < 50 ) {
+    if ( this.GetDistance(this.nearestDot) < 25 ) {
     this.brain.layers[0].push({
       value: this.nearestDot.x - this.x
     });
