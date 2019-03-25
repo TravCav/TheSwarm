@@ -11,7 +11,7 @@ class Dot {
     };
     this.age = 0;
     this.energy = Math.random() * 10;
-    this.tickRate = 0.02;
+    this.tickRate = 0;//0.02;
     this.nearestDot = null;
     this.nearestFood = null;
     this.x = Math.random() * ctx.canvas.width;
@@ -94,8 +94,8 @@ class Dot {
     this.y += this.vector.y;
 
     const lastVector = Math.sqrt(this.vector.x * this.vector.x + this.vector.y * this.vector.y) / 1000;
-    this.energy -= this.tickRate + lastVector;
-    //this.energy -= this.tickRate + (lastVector  * (1 + (this.age/1000))) + (this.age/10000);
+    //this.energy -= this.tickRate + lastVector + (this.age/10000);
+    this.energy -= (lastVector  * (1 + (this.age/10000))) + (this.age/10000);
     //this.energy -= this.tickRate + (this.tickRate / this.age) + (lastVector  * (1 + (this.age/1000)));// + (this.age/10000);
     this.age++;
   }
