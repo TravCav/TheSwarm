@@ -42,10 +42,10 @@ class Dot {
     return this.Consumed() || this.energy < 0 || this.WallDeath();
   }
 
-  CopyColor() {
-    this.color.r = this.ColorBoundCheck(this.nearestDot.color.r + Math.floor((Math.random() * 64) - 32));
-    this.color.g = this.ColorBoundCheck(this.nearestDot.color.g + Math.floor((Math.random() * 64) - 32));
-    this.color.b = this.ColorBoundCheck(this.nearestDot.color.b + Math.floor((Math.random() * 64) - 32));
+  CopyColor(dotToCopy) {
+    this.color.r = this.ColorBoundCheck(dotToCopy.color.r + Math.floor((Math.random() * 64) - 32));
+    this.color.g = this.ColorBoundCheck(dotToCopy.color.g + Math.floor((Math.random() * 64) - 32));
+    this.color.b = this.ColorBoundCheck(dotToCopy.color.b + Math.floor((Math.random() * 64) - 32));
   }
 
   ColorBoundCheck(color) {

@@ -7,7 +7,7 @@ ctx.canvas.height = window.innerHeight;
 let centerX = ctx.canvas.width / 2;
 let centerY = ctx.canvas.height / 2;
 let pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
-let density = 3;
+let density = 1;
 let dotCount = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
 
 let population = {
@@ -45,7 +45,7 @@ function DoTheThings() {
   population.data.mostEnergy = 0;
   population.data.mostChildren = 0;
 
-  for (let i = 0; i < dotCount; i++) {
+  for (let i = 0; i < population.dots.length; i++) {
     totalEnergy += population.dots[i].energy;
     population.dots[i].CheckDots(population);
 
@@ -67,7 +67,7 @@ function DoTheThings() {
     }
   }
 
-  let averageEnergy = totalEnergy / dotCount;
+  let averageEnergy = totalEnergy / population.dots.length;
   if (averageEnergy > population.data.highestAverage) {
     population.data.highestAverage = averageEnergy;
   }
@@ -80,20 +80,17 @@ function DoTheThings() {
         population.dots[dotIndex].brain.Save();
       }
 
-      let copyDot = population.data.oldestAgeIndex;
-      if (Math.random() < 0.9) {
-        copyDot = population.data.mostChildrenIndex;
-      }
+    
 
       // got et
       if (population.dots[dotIndex].consumed === true) {
         population.dots[dotIndex].brain.Copy(
           population.dots[dotIndex].nearestDot.brain
         );
-        population.dots[dotIndex].CopyColor();
+        population.dots[dotIndex].CopyColor(population.dots[dotIndex].nearestDot);
         population.dots[dotIndex].consumed = false;
         do {
-          const r = (Math.random() * 10);
+          const r = (Math.random() * 100);
           const a = Math.random() * 6.28;
           population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[dotIndex].x);
           population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[dotIndex].y);
@@ -101,17 +98,37 @@ function DoTheThings() {
         } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
 
       } else {
+        let copyDot = Math.floor(Math.random() * population.dots.length);
+        // let rnd = Math.random();
+        // if (rnd < 0.4) {
+        //   copyDot = population.data.mostChildrenIndex;
+        // }
+        // if (rnd > 0.6) {
+        //   copyDot = population.data.oldestAgeIndex;
+        // }
+        
+
         population.dots[dotIndex].brain.Copy(
           population.dots[copyDot].brain
         );
 
         let cDot = population.dots[copyDot];
-        //population.dots[dotIndex].color.r = cDot.color.r;
-        //population.dots[dotIndex].color.g = cDot.color.g;
-        //population.dots[dotIndex].color.b = cDot.color.b;
+        population.dots[dotIndex].CopyColor(cDot);
+        // population.dots[dotIndex].color.r = cDot.color.r;
+        // population.dots[dotIndex].color.g = cDot.color.g;
+        // population.dots[dotIndex].color.b = cDot.color.b;
         
-        population.dots[dotIndex].x = Math.random() * ctx.canvas.width;
-        population.dots[dotIndex].y = Math.random() * ctx.canvas.height;
+        // population.dots[dotIndex].x = Math.random() * ctx.canvas.width;
+        // population.dots[dotIndex].y = Math.random() * ctx.canvas.height;
+
+        do {
+          const r = (Math.random() * 100);
+          const a = Math.random() * 6.28;
+          population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[copyDot].x);
+          population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[copyDot].y);
+
+        } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
+
       }
 
       population.dots[dotIndex].brain.Mutate();
@@ -137,7 +154,7 @@ function DrawGrid() {
   ////let index = 0;
 
   // draw
-  for (let i = 0; i < dotCount; i++) {
+  for (let i = 0; i < population.dots.length; i++) {
     let x = Math.floor(population.dots[i].x);
     let y = Math.floor(population.dots[i].y);
 
