@@ -90,7 +90,7 @@ function DoTheThings() {
         population.dots[dotIndex].CopyColor(population.dots[dotIndex].nearestDot);
         population.dots[dotIndex].consumed = false;
         do {
-          const r = (Math.random() * 50);
+          const r = (Math.random() * 75);
           const a = Math.random() * 6.28;
           population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[dotIndex].x);
           population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[dotIndex].y);
@@ -123,7 +123,7 @@ function DoTheThings() {
 
         copyDot = Math.floor(Math.random() * population.dots.length);
         do {
-          const r = (Math.random() * 50);
+          const r = (Math.random() * 75);
           const a = Math.random() * 6.28;
           population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[copyDot].x);
           population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[copyDot].y);
@@ -213,7 +213,7 @@ function DrawGrid() {
   if (fps < 30) {
     population.dots.splice(population.dots.length - 1);
   }
-  if (fps > 60) { // && population.dots.length < dotCount) {
+  if (fps > 40 && population.dots.length < ((ctx.canvas.width * ctx.canvas.height) / 10000) * density) {
     AddDots(1);
   }
 
