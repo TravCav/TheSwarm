@@ -6,6 +6,12 @@ class Brain {
     this.layers.push(new Array(10));
     this.layers.push(new Array(10));
     this.layers.push(new Array(10));
+    this.layers.push(new Array(10));
+    this.layers.push(new Array(10));
+    this.layers.push(new Array(10));
+    this.layers.push(new Array(10));
+    this.layers.push(new Array(10));
+    this.layers.push(new Array(10));
     this.layers.push(new Array(4));
 
     // fill layers
