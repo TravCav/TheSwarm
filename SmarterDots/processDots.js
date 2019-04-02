@@ -31,7 +31,7 @@ function AddDots(dotsToAdd) {
     population.dots.push(new Dot());
 
     //if (i < dotsToAdd * 0.90) { //===0) {
-      population.dots[i].brain.Restore();
+    population.dots[i].brain.Restore();
     //}
   }
 }
