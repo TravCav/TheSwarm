@@ -68,13 +68,38 @@ function DoTheThings() {
   centerX = ctx.canvas.width / 2;
   centerY = ctx.canvas.height / 2;
 
+  let totalEnergy = 0;
+  population.data.oldestAge = 0;
+  population.data.mostEnergy = 0;
+  population.data.mostChildren = 0;
+
   for (let i = 0; i < population.dots.length; i++) {
+    totalEnergy += population.dots[i].energy;
     population.dots[i].CheckDots(population);
+
     population.dots[i].DoMovement(centerX, centerY);
+
+    if (population.dots[i].energy > population.data.mostEnergy) {
+      population.data.mostEnergyIndex = i;
+      population.data.mostEnergy = population.dots[i].energy;
+    }
+
+    if (population.dots[i].children > population.data.mostChildren) {
+      population.data.mostChildrenIndex = i;
+      population.data.mostChildren = population.dots[i].children;
+    }
+
+    if (population.dots[i].age > population.data.oldestAge) {
+      population.data.oldestAgeIndex = i;
+      population.data.oldestAge = population.dots[i].age;
+    }
   }
 
-  GetPopulationData();
-
+  let averageEnergy = totalEnergy / population.dots.length;
+  if (averageEnergy > population.data.highestAverage) {
+    population.data.highestAverage = averageEnergy;
+  }
+  
   for (
     let dotIndex = 0; dotIndex < population.dots.length; dotIndex++
   ) {
@@ -155,7 +180,6 @@ function DrawGrid() {
     }
   }
 
-  GetPopulationData();
   DrawBrain(population.data.oldestAgeIndex, 20);
   DrawBrain(population.data.mostChildrenIndex, 250);
 
@@ -198,37 +222,6 @@ function DrawGrid() {
   }, 1);
 
   return;
-}
-
-function GetPopulationData() {
-  let totalEnergy = 0;
-  population.data.oldestAge = 0;
-  population.data.mostEnergy = 0;
-  population.data.mostChildren = 0;
-
-  for (let i = 0; i < population.dots.length; i++) {
-    totalEnergy += population.dots[i].energy;
-
-    if (population.dots[i].energy > population.data.mostEnergy) {
-      population.data.mostEnergyIndex = i;
-      population.data.mostEnergy = population.dots[i].energy;
-    }
-
-    if (population.dots[i].children > population.data.mostChildren) {
-      population.data.mostChildrenIndex = i;
-      population.data.mostChildren = population.dots[i].children;
-    }
-
-    if (population.dots[i].age > population.data.oldestAge) {
-      population.data.oldestAgeIndex = i;
-      population.data.oldestAge = population.dots[i].age;
-    }
-  }
-
-  let averageEnergy = totalEnergy / population.dots.length;
-  if (averageEnergy > population.data.highestAverage) {
-    population.data.highestAverage = averageEnergy;
-  }
 }
 
 function ListDetails() {
