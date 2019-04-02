@@ -9,7 +9,7 @@ ctx.canvas.height = window.innerHeight;
 let centerX = ctx.canvas.width / 2;
 let centerY = ctx.canvas.height / 2;
 let pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
-let density = 2;
+let density = 1;
 let dotCount = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
 
 let population = {
@@ -30,9 +30,9 @@ function AddDots(dotsToAdd) {
   for (let i = 0; i < dotsToAdd; i++) {
     population.dots.push(new Dot());
 
-    if (i < dotsToAdd * 0.90) { //===0) {
+    //if (i < dotsToAdd * 0.90) { //===0) {
       population.dots[i].brain.Restore();
-    }
+    //}
   }
 }
 
@@ -90,7 +90,7 @@ function DoTheThings() {
         population.dots[dotIndex].CopyColor(population.dots[dotIndex].nearestDot);
         population.dots[dotIndex].consumed = false;
         do {
-          const r = (Math.random() * 30);
+          const r = (Math.random() * 50);
           const a = Math.random() * 6.28;
           population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[dotIndex].x);
           population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[dotIndex].y);
@@ -117,7 +117,7 @@ function DoTheThings() {
 
         copyDot = Math.floor(Math.random() * population.dots.length);
         do {
-          const r = (Math.random() * 30);
+          const r = (Math.random() * 50);
           const a = Math.random() * 6.28;
           population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[copyDot].x);
           population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[copyDot].y);
