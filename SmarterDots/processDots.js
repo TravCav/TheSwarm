@@ -9,7 +9,7 @@ ctx.canvas.height = window.innerHeight;
 let centerX = ctx.canvas.width / 2;
 let centerY = ctx.canvas.height / 2;
 let pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
-let density = 4;
+let density = 2;
 let dotCount = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
 
 let population = {
@@ -76,7 +76,7 @@ function DoTheThings() {
     let dotIndex = 0; dotIndex < population.dots.length; dotIndex++
   ) {
     if (population.dots[dotIndex].CheckDeath() === true) {
-      if (population.dots[dotIndex].age >= population.data.oldestAge) {
+      if (population.dots[dotIndex].children >= population.data.mostChildren) {
         population.dots[dotIndex].brain.Save();
       }
 
@@ -90,7 +90,7 @@ function DoTheThings() {
         population.dots[dotIndex].CopyColor(population.dots[dotIndex].nearestDot);
         population.dots[dotIndex].consumed = false;
         do {
-          const r = (Math.random() * 75);
+          const r = (Math.random() * 30);
           const a = Math.random() * 6.28;
           population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[dotIndex].x);
           population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[dotIndex].y);
@@ -114,16 +114,10 @@ function DoTheThings() {
 
         let cDot = population.dots[copyDot];
         population.dots[dotIndex].CopyColor(cDot);
-        // population.dots[dotIndex].color.r = cDot.color.r;
-        // population.dots[dotIndex].color.g = cDot.color.g;
-        // population.dots[dotIndex].color.b = cDot.color.b;
-
-        // population.dots[dotIndex].x = Math.random() * ctx.canvas.width;
-        // population.dots[dotIndex].y = Math.random() * ctx.canvas.height;
 
         copyDot = Math.floor(Math.random() * population.dots.length);
         do {
-          const r = (Math.random() * 75);
+          const r = (Math.random() * 30);
           const a = Math.random() * 6.28;
           population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[copyDot].x);
           population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[copyDot].y);
@@ -210,12 +204,12 @@ function DrawGrid() {
   CircleDot(population.data.oldestAgeIndex, "white", 25);
   CircleDot(population.data.mostChildrenIndex, "green", 20);
 
-  if (fps < 30) {
-    population.dots.splice(population.dots.length - 1);
-  }
-  if (fps > 40 && population.dots.length < ((ctx.canvas.width * ctx.canvas.height) / 10000) * density) {
-    AddDots(1);
-  }
+  // if (fps < 30) {
+  //   population.dots.splice(population.dots.length - 1);
+  // }
+  // if (fps > 40 && population.dots.length < ((ctx.canvas.width * ctx.canvas.height) / 10000) * density) {
+  //   AddDots(1);
+  // }
 
   setTimeout(function () {
     DrawGrid();
