@@ -43,9 +43,9 @@ class Dot {
   }
 
   CopyColor(dotToCopy) {
-    this.color.r = this.ColorBoundCheck(dotToCopy.color.r + Math.floor((Math.random() * 32) - 16));
-    this.color.g = this.ColorBoundCheck(dotToCopy.color.g + Math.floor((Math.random() * 32) - 16));
-    this.color.b = this.ColorBoundCheck(dotToCopy.color.b + Math.floor((Math.random() * 32) - 16));
+    this.color.r = this.ColorBoundCheck(dotToCopy.color.r + Math.floor((Math.random() * 64) - 32));
+    this.color.g = this.ColorBoundCheck(dotToCopy.color.g + Math.floor((Math.random() * 64) - 32));
+    this.color.b = this.ColorBoundCheck(dotToCopy.color.b + Math.floor((Math.random() * 64) - 32));
   }
 
   ColorBoundCheck(color) {
@@ -111,18 +111,18 @@ class Dot {
   GetInputs(cWidth, cHeight) {
     this.brain.layers[0] = [];
 
-    let lastLayer = this.brain.layers.length - 1;
+    let outputLayer = this.brain.layers.length - 1;
     this.brain.layers[0].push({
-      value: this.brain.layers[lastLayer][0].value
+      value: this.brain.layers[outputLayer][0].value
     });
     this.brain.layers[0].push({
-      value: this.brain.layers[lastLayer][1].value
+      value: this.brain.layers[outputLayer][1].value
     });
     this.brain.layers[0].push({
-      value: this.brain.layers[lastLayer][2].value
+      value: this.brain.layers[outputLayer][2].value
     });
     this.brain.layers[0].push({
-      value: this.brain.layers[lastLayer][3].value
+      value: this.brain.layers[outputLayer][3].value
     });
 
     this.brain.layers[0].push({
@@ -174,6 +174,15 @@ class Dot {
     this.brain.layers[0].push({
       value: (this.y - cHeight) / cHeight
     });
+
+    let lastLayer = this.brain.layers.length - 2;
+    for (let index = 0; index < this.brain.layers[lastLayer].length; index++) {
+      this.brain.layers[0].push({
+        value: this.brain.layers[lastLayer][index].value
+      });
+    }
+
+
   }
 
   ThinkAboutStuff(cWidth, cHeight) {
