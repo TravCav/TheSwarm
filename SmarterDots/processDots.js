@@ -9,7 +9,7 @@ ctx.canvas.height = window.innerHeight;
 let centerX = ctx.canvas.width / 2;
 let centerY = ctx.canvas.height / 2;
 let pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
-let density = 1;
+let density = 4;
 let dotCount = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
 
 let population = {
@@ -99,14 +99,13 @@ function DoTheThings() {
 
       } else {
         let copyDot = Math.floor(Math.random() * population.dots.length);
-        let rnd = Math.random();
-        if (rnd < 0.1) {
-          copyDot = population.data.mostChildrenIndex;
-        }
-        if (rnd > 0.9) {
-          copyDot = population.data.oldestAgeIndex;
-        }
-
+        // let rnd = Math.random();
+        // if (rnd < 0.1) {
+        //   copyDot = population.data.mostChildrenIndex;
+        // }
+        // if (rnd > 0.9) {
+        //   copyDot = population.data.oldestAgeIndex;
+        // }
 
         population.dots[dotIndex].brain.Copy(
           population.dots[copyDot].brain
@@ -115,7 +114,7 @@ function DoTheThings() {
         let cDot = population.dots[copyDot];
         population.dots[dotIndex].CopyColor(cDot);
 
-        copyDot = Math.floor(Math.random() * population.dots.length);
+        //copyDot = Math.floor(Math.random() * population.dots.length);
         do {
           const r = (Math.random() * 50);
           const a = Math.random() * 6.28;
