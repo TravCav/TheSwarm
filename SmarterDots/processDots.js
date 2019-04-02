@@ -11,6 +11,8 @@ let centerY = ctx.canvas.height / 2;
 let pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
 let density = 4;
 let dotCount = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
+let lowerLimit = ((ctx.canvas.width * ctx.canvas.height) / 10000) * 1;
+let upperLimit = ((ctx.canvas.width * ctx.canvas.height) / 10000) * 4;
 
 let population = {
   data: {
@@ -32,45 +34,46 @@ function AddDots(dotsToAdd) {
 
     //if (i < dotsToAdd * 0.90) { //===0) {
     population.dots[i].brain.Restore();
+    population.dots[i].brain.Mutate();
     //}
   }
+}
+
+function CopyDot(dotIndex, copyDot) {
+  population.dots[dotIndex].brain.Copy(
+    copyDot.brain
+  );
+
+  population.dots[dotIndex].CopyColor(copyDot);
+
+  do {
+    const r = (Math.random() * 50);
+    const a = Math.random() * 6.28;
+    population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + copyDot.x);
+    population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + copyDot.y);
+
+  } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
+
+  population.dots[dotIndex].brain.Mutate();
+
+  population.dots[dotIndex].vector.x = 0;
+  population.dots[dotIndex].vector.y = 0;
+  population.dots[dotIndex].energy = 2;
+  population.dots[dotIndex].age = 0;
+  population.dots[dotIndex].children = 0;
+  population.dots[dotIndex].consumed = false;
 }
 
 function DoTheThings() {
   centerX = ctx.canvas.width / 2;
   centerY = ctx.canvas.height / 2;
 
-  let totalEnergy = 0;
-  population.data.oldestAge = 0;
-  population.data.mostEnergy = 0;
-  population.data.mostChildren = 0;
-
   for (let i = 0; i < population.dots.length; i++) {
-    totalEnergy += population.dots[i].energy;
     population.dots[i].CheckDots(population);
-
     population.dots[i].DoMovement(centerX, centerY);
-
-    if (population.dots[i].energy > population.data.mostEnergy) {
-      population.data.mostEnergyIndex = i;
-      population.data.mostEnergy = population.dots[i].energy;
-    }
-
-    if (population.dots[i].children > population.data.mostChildren) {
-      population.data.mostChildrenIndex = i;
-      population.data.mostChildren = population.dots[i].children;
-    }
-
-    if (population.dots[i].age > population.data.oldestAge) {
-      population.data.oldestAgeIndex = i;
-      population.data.oldestAge = population.dots[i].age;
-    }
   }
 
-  let averageEnergy = totalEnergy / population.dots.length;
-  if (averageEnergy > population.data.highestAverage) {
-    population.data.highestAverage = averageEnergy;
-  }
+  GetPopulationData();
 
   for (
     let dotIndex = 0; dotIndex < population.dots.length; dotIndex++
@@ -80,58 +83,34 @@ function DoTheThings() {
         population.dots[dotIndex].brain.Save();
       }
 
-
+      let copyDot = {};
 
       // got et
       if (population.dots[dotIndex].consumed === true) {
-        population.dots[dotIndex].brain.Copy(
-          population.dots[dotIndex].nearestDot.brain
-        );
-        population.dots[dotIndex].CopyColor(population.dots[dotIndex].nearestDot);
-        population.dots[dotIndex].consumed = false;
-        do {
-          const r = (Math.random() * 50);
-          const a = Math.random() * 6.28;
-          population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[dotIndex].x);
-          population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[dotIndex].y);
-
-        } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
-
+        copyDot = population.dots[dotIndex].nearestDot;
+        CopyDot(dotIndex, copyDot);
+        if (population.dots.length < upperLimit && fps > 30) {
+          AddDots(1);
+          CopyDot(population.dots.length - 1, copyDot);
+        }
       } else {
-        let copyDot = Math.floor(Math.random() * population.dots.length);
-        // let rnd = Math.random();
-        // if (rnd < 0.1) {
-        //   copyDot = population.data.mostChildrenIndex;
+        // let copyIndex = Math.floor(Math.random() * population.dots.length);
+        // copyDot = population.dots[copyIndex];
+        // CopyDot(dotIndex, copyDot);
+        // if (population.dots.length > lowerLimit && population.data.mostChildrenIndex != dotIndex && population.data.oldestAgeIndex != dotIndex) {
+        //   population.dots.splice(dotIndex);
         // }
-        // if (rnd > 0.9) {
-        //   copyDot = population.data.oldestAgeIndex;
-        // }
+        // else {
+          let copyIndex = Math.floor(Math.random() * population.dots.length);
+          copyDot = population.dots[copyIndex];
+          CopyDot(dotIndex, copyDot);
+        //}
 
-        population.dots[dotIndex].brain.Copy(
-          population.dots[copyDot].brain
-        );
-
-        let cDot = population.dots[copyDot];
-        population.dots[dotIndex].CopyColor(cDot);
-
-        //copyDot = Math.floor(Math.random() * population.dots.length);
-        do {
-          const r = (Math.random() * 50);
-          const a = Math.random() * 6.28;
-          population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + population.dots[copyDot].x);
-          population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + population.dots[copyDot].y);
-
-        } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
-
+        if (population.dots.length < lowerLimit) {
+          AddDots(1);
+        }
       }
 
-      population.dots[dotIndex].brain.Mutate();
-
-      population.dots[dotIndex].vector.x = 0;
-      population.dots[dotIndex].vector.y = 0;
-      population.dots[dotIndex].energy = 2;
-      population.dots[dotIndex].age = 0;
-      population.dots[dotIndex].children = 0;
     }
   }
 }
@@ -176,6 +155,7 @@ function DrawGrid() {
     }
   }
 
+  GetPopulationData();
   DrawBrain(population.data.oldestAgeIndex, 20);
   DrawBrain(population.data.mostChildrenIndex, 250);
 
@@ -188,14 +168,16 @@ function DrawGrid() {
   times.push(now);
   fps = times.length;
 
-  //ctx.font = "10px Arial";
   ctx.fillStyle = "white";
   ctx.fillText("fps: " + fps + ", DotCount: " + population.dots.length, 20, 15);
 
   ctx.fillStyle = "white";
   ctx.fillText("oldest: " + population.data.oldestAgeIndex + " - " + population.data.oldestAge + " - " + population.dots[population.data.oldestAgeIndex].energy.toFixed(2), 20, 30);
+
+
   ctx.fillStyle = "lightgreen";
   ctx.fillText("most prolific: " + population.data.mostChildrenIndex + " - " + population.data.mostChildren + " - " + population.dots[population.data.mostChildrenIndex].energy.toFixed(2), 20, 260);
+
   ctx.stroke();
 
 
@@ -203,9 +185,10 @@ function DrawGrid() {
   CircleDot(population.data.oldestAgeIndex, "white", 25);
   CircleDot(population.data.mostChildrenIndex, "green", 20);
 
-  // if (fps < 30) {
+  // if (fps < 24 && population.data.mostChildrenIndex != population.dots.length - 1 && population.data.oldestAgeIndex != population.dots.length - 1) {
   //   population.dots.splice(population.dots.length - 1);
   // }
+
   // if (fps > 40 && population.dots.length < ((ctx.canvas.width * ctx.canvas.height) / 10000) * density) {
   //   AddDots(1);
   // }
@@ -213,7 +196,39 @@ function DrawGrid() {
   setTimeout(function () {
     DrawGrid();
   }, 1);
+
   return;
+}
+
+function GetPopulationData() {
+  let totalEnergy = 0;
+  population.data.oldestAge = 0;
+  population.data.mostEnergy = 0;
+  population.data.mostChildren = 0;
+
+  for (let i = 0; i < population.dots.length; i++) {
+    totalEnergy += population.dots[i].energy;
+
+    if (population.dots[i].energy > population.data.mostEnergy) {
+      population.data.mostEnergyIndex = i;
+      population.data.mostEnergy = population.dots[i].energy;
+    }
+
+    if (population.dots[i].children > population.data.mostChildren) {
+      population.data.mostChildrenIndex = i;
+      population.data.mostChildren = population.dots[i].children;
+    }
+
+    if (population.dots[i].age > population.data.oldestAge) {
+      population.data.oldestAgeIndex = i;
+      population.data.oldestAge = population.dots[i].age;
+    }
+  }
+
+  let averageEnergy = totalEnergy / population.dots.length;
+  if (averageEnergy > population.data.highestAverage) {
+    population.data.highestAverage = averageEnergy;
+  }
 }
 
 function ListDetails() {
@@ -308,7 +323,7 @@ function PlaceSquare(x, y, color, s) {
 }
 
 
-AddDots(dotCount);
+AddDots(lowerLimit);
 for (let i = 0; i < 120; i++) {
   times.push(performance.now());
 }

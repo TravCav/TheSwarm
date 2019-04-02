@@ -43,9 +43,9 @@ class Dot {
   }
 
   CopyColor(dotToCopy) {
-    this.color.r = this.ColorBoundCheck(dotToCopy.color.r + Math.floor((Math.random() * 64) - 32));
-    this.color.g = this.ColorBoundCheck(dotToCopy.color.g + Math.floor((Math.random() * 64) - 32));
-    this.color.b = this.ColorBoundCheck(dotToCopy.color.b + Math.floor((Math.random() * 64) - 32));
+    this.color.r = this.ColorBoundCheck(dotToCopy.color.r + Math.floor((Math.random() * 32) - 16));
+    this.color.g = this.ColorBoundCheck(dotToCopy.color.g + Math.floor((Math.random() * 32) - 16));
+    this.color.b = this.ColorBoundCheck(dotToCopy.color.b + Math.floor((Math.random() * 32) - 16));
   }
 
   ColorBoundCheck(color) {
