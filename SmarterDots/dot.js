@@ -87,10 +87,11 @@ class Dot {
 
   DoMovement(cWidth, cHeight) {
     this.ThinkAboutStuff(cWidth, cHeight);
-    let lastLayer = this.brain.layers.length - 1;
+    let lastLayerIndex = this.brain.layers.length - 1;
+    let lastLayer = this.brain.layers[lastLayerIndex];
     let vectorModifier = 1;// - (this.age * 0.001);
-    this.vector.x += (this.brain.layers[lastLayer][0].value - this.brain.layers[lastLayer][1].value);
-    this.vector.y += (this.brain.layers[lastLayer][2].value - this.brain.layers[lastLayer][3].value);
+    this.vector.x += ((lastLayer[5].value + lastLayer[6].value + lastLayer[7].value) - (lastLayer[0].value + lastLayer[1].value + lastLayer[2].value)) /3;
+    this.vector.y += ((lastLayer[2].value + lastLayer[4].value + lastLayer[7].value) - (lastLayer[0].value + lastLayer[3].value + lastLayer[5].value) ) /3;
     this.x += (this.vector.x * vectorModifier);
     this.y += (this.vector.y * vectorModifier);
 
@@ -123,6 +124,18 @@ class Dot {
     });
     this.brain.layers[0].push({
       value: this.brain.layers[outputLayer][3].value
+    });
+    this.brain.layers[0].push({
+      value: this.brain.layers[outputLayer][4].value
+    });
+    this.brain.layers[0].push({
+      value: this.brain.layers[outputLayer][5].value
+    });
+    this.brain.layers[0].push({
+      value: this.brain.layers[outputLayer][6].value
+    });
+    this.brain.layers[0].push({
+      value: this.brain.layers[outputLayer][7].value
     });
 
     this.brain.layers[0].push({

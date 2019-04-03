@@ -99,7 +99,7 @@ function DoTheThings() {
   if (averageEnergy > population.data.highestAverage) {
     population.data.highestAverage = averageEnergy;
   }
-  
+
   for (
     let dotIndex = 0; dotIndex < population.dots.length; dotIndex++
   ) {
@@ -126,14 +126,14 @@ function DoTheThings() {
         //   population.dots.splice(dotIndex);
         // }
         // else {
-          let copyIndex = Math.floor(Math.random() * population.dots.length);
-          copyDot = population.dots[copyIndex];
-          CopyDot(dotIndex, copyDot);
+        let copyIndex = Math.floor(Math.random() * population.dots.length);
+        copyDot = population.dots[copyIndex];
+        CopyDot(dotIndex, copyDot);
         //}
 
-        if (population.dots.length < lowerLimit) {
-          AddDots(1);
-        }
+        // if (population.dots.length < lowerLimit) {
+        //   AddDots(1);
+        // }
       }
 
     }
@@ -251,46 +251,24 @@ function DrawBrain(dotIndex, offset) {
     const neuronSize = 200 / layer.length;
     for (let neuronIndex = 0; neuronIndex < layer.length; neuronIndex++) {
       const neuronValue = layer[neuronIndex].value;
-      PlaceSquare(Math.floor(layerIndex * layerSize), Math.floor((1 + neuronIndex) * neuronSize + offset), {
-        r: (dot.color.r / 2) + (127 * neuronValue),
-        g: (dot.color.g / 2) + (127 * neuronValue),
-        b: (dot.color.b / 2) + (127 * neuronValue)
-      }, 10);
+      PlaceValueSquare(Math.floor(layerIndex * layerSize), Math.floor((1 + neuronIndex) * neuronSize + offset), dot.color, neuronValue, 10);
     }
   }
 
   const lastLayer = dot.brain.layers[brain.layers.length - 1];
-  const leftNeuronValue = lastLayer[1].value;
-  const leftColor = {
-    r: (dot.color.r / 2) + (127 * leftNeuronValue),
-    g: (dot.color.g / 2) + (127 * leftNeuronValue),
-    b: (dot.color.b / 2) + (127 * leftNeuronValue)
-  };
-  PlaceSquare(175, 100 + offset, leftColor, 10);
+  // // PlaceValueSquare(175, 100 + offset, dot.color, lastLayer[1].value, 10);  // left
+  // // PlaceValueSquare(225, 100 + offset, dot.color, lastLayer[0].value, 10);  //right
+  // // PlaceValueSquare(200, 75 + offset, dot.color, lastLayer[3].value, 10);  // up
+  // // PlaceValueSquare(200, 125 + offset, dot.color, lastLayer[2].value, 10); // down
 
-  const rightNeuronValue = lastLayer[0].value;
-  const rightColor = {
-    r: (dot.color.r / 2) + (127 * rightNeuronValue),
-    g: (dot.color.g / 2) + (127 * rightNeuronValue),
-    b: (dot.color.b / 2) + (127 * rightNeuronValue)
-  };
-  PlaceSquare(225, 100 + offset, rightColor, 10);
-
-  const upNeuronValue = lastLayer[3].value;
-  const upColor = {
-    r: (dot.color.r / 2) + (127 * upNeuronValue),
-    g: (dot.color.g / 2) + (127 * upNeuronValue),
-    b: (dot.color.b / 2) + (127 * upNeuronValue)
-  };
-  PlaceSquare(200, 75 + offset, upColor, 10);
-
-  const downNeuronValue = lastLayer[2].value;
-  const downColor = {
-    r: (dot.color.r / 2) + (127 * downNeuronValue),
-    g: (dot.color.g / 2) + (127 * downNeuronValue),
-    b: (dot.color.b / 2) + (127 * downNeuronValue)
-  };
-  PlaceSquare(200, 125 + offset, downColor, 10);
+  PlaceValueSquare(175, 75 + offset, dot.color, lastLayer[0].value, 10);
+  PlaceValueSquare(200, 75 + offset, dot.color, lastLayer[1].value, 10);
+  PlaceValueSquare(225, 75 + offset, dot.color, lastLayer[2].value, 10);
+  PlaceValueSquare(175, 100 + offset, dot.color, lastLayer[3].value, 10);
+  PlaceValueSquare(225, 100 + offset, dot.color, lastLayer[4].value, 10);
+  PlaceValueSquare(175, 125 + offset, dot.color, lastLayer[5].value, 10);
+  PlaceValueSquare(200, 125 + offset, dot.color, lastLayer[6].value, 10);
+  PlaceValueSquare(225, 125 + offset, dot.color, lastLayer[7].value, 10);
 
   const xVector = (lastLayer[0].value - lastLayer[1].value) * 3;
   const yVector = (lastLayer[2].value - lastLayer[3].value) * 3;
@@ -307,6 +285,19 @@ function PlacePixel(x, y, color, d) {
   pixels.data[index + 3] = 255;
 }
 
+function PlaceValueSquare(x, y, dotColor, dotValue, s) {
+  const color = {
+    r: (dotColor.r / 2) + (127 * dotValue),
+    g: (dotColor.g / 2) + (127 * dotValue),
+    b: (dotColor.b / 2) + (127 * dotValue)
+  };
+  for (let xx = x; xx < x + s; xx++) {
+    for (let yy = y; yy < y + s; yy++) {
+      PlacePixel(xx, yy, color, 0);
+    }
+  }
+}
+
 function PlaceSquare(x, y, color, s) {
   for (let xx = x; xx < x + s; xx++) {
     for (let yy = y; yy < y + s; yy++) {
@@ -316,7 +307,7 @@ function PlaceSquare(x, y, color, s) {
 }
 
 
-AddDots(lowerLimit);
+AddDots(10);
 for (let i = 0; i < 120; i++) {
   times.push(performance.now());
 }
