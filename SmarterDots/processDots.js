@@ -62,6 +62,7 @@ function CopyDot(dotIndex, copyDot) {
   population.dots[dotIndex].age = 0;
   population.dots[dotIndex].children = 0;
   population.dots[dotIndex].consumed = false;
+  population.dots[dotIndex].generation = copyDot.generation + 1;
 }
 
 function DoTheThings() {

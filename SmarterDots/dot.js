@@ -20,6 +20,7 @@ class Dot {
     this.population = [];
     this.consumed = false;
     this.children = 0;
+    this.generation = 0;
   }
 
   CheckDots(pop) {
