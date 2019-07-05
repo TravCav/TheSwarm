@@ -9,7 +9,7 @@ ctx.canvas.height = window.innerHeight;
 let centerX = ctx.canvas.width / 2;
 let centerY = ctx.canvas.height / 2;
 let pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
-let density = 4;
+let density = 1;
 let dotCount = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
 let lowerLimit = ((ctx.canvas.width * ctx.canvas.height) / 10000) * 1;
 let upperLimit = ((ctx.canvas.width * ctx.canvas.height) / 10000) * 4;
@@ -39,7 +39,7 @@ function AddDots(dotsToAdd) {
   }
 }
 
-function CopyDot(dotIndex, copyDot) {
+function CopyDot(dotIndex, copyDot, offspring) {
   population.dots[dotIndex].brain.Copy(
     copyDot.brain
   );
@@ -47,7 +47,11 @@ function CopyDot(dotIndex, copyDot) {
   population.dots[dotIndex].CopyColor(copyDot);
 
   do {
-    const r = (Math.random() * 50);
+    let r = (Math.random() * 50);
+    // if(!offspring) {
+    //   r += 100
+    // }
+
     const a = Math.random() * 6.28;
     population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + copyDot.x);
     population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + copyDot.y);
@@ -62,7 +66,6 @@ function CopyDot(dotIndex, copyDot) {
   population.dots[dotIndex].age = 0;
   population.dots[dotIndex].children = 0;
   population.dots[dotIndex].consumed = false;
-  population.dots[dotIndex].generation = copyDot.generation + 1;
 }
 
 function DoTheThings() {
@@ -114,10 +117,10 @@ function DoTheThings() {
       // got et
       if (population.dots[dotIndex].consumed === true) {
         copyDot = population.dots[dotIndex].nearestDot;
-        CopyDot(dotIndex, copyDot);
-        if (population.dots.length < upperLimit && fps > 30) {
+        CopyDot(dotIndex, copyDot, true);
+        if (population.dots.length < upperLimit && fps > 40) {
           AddDots(1);
-          CopyDot(population.dots.length - 1, copyDot);
+          CopyDot(population.dots.length - 1, copyDot, true);
         }
       } else {
         // let copyIndex = Math.floor(Math.random() * population.dots.length);
@@ -129,7 +132,9 @@ function DoTheThings() {
         // else {
         let copyIndex = Math.floor(Math.random() * population.dots.length);
         copyDot = population.dots[copyIndex];
-        CopyDot(dotIndex, copyDot);
+        CopyDot(dotIndex, copyDot, false);
+        population.dots[dotIndex].x = Math.floor(Math.random() * ctx.canvas.width);
+        population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
         //}
 
         // if (population.dots.length < lowerLimit) {
@@ -308,7 +313,7 @@ function PlaceSquare(x, y, color, s) {
 }
 
 
-AddDots(10);
+AddDots(50);
 for (let i = 0; i < 120; i++) {
   times.push(performance.now());
 }

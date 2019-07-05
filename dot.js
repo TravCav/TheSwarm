@@ -20,7 +20,6 @@ class Dot {
     this.population = [];
     this.consumed = false;
     this.children = 0;
-    this.generation = 0;
   }
 
   CheckDots(pop) {
@@ -152,7 +151,7 @@ class Dot {
       value: this.vector.y
     });
 
-    if (this.GetDistance(this.nearestDot) < 25) {
+   //// if (this.GetDistance(this.nearestDot) < 25) {
       this.brain.layers[0].push({
         value: this.nearestDot.x - this.x
       });
@@ -172,14 +171,14 @@ class Dot {
       this.brain.layers[0].push({
         value: Math.abs(this.color.b - this.nearestDot.color.b)
       });
-    } else {
-      this.brain.layers[0].push({ value: 0 });
-      this.brain.layers[0].push({ value: 0 });
-      this.brain.layers[0].push({ value: 0 });
-      this.brain.layers[0].push({ value: 0 });
-      this.brain.layers[0].push({ value: 0 });
-      this.brain.layers[0].push({ value: 0 });
-    }
+    // } else {
+    //   this.brain.layers[0].push({ value: 0 });
+    //   this.brain.layers[0].push({ value: 0 });
+    //   this.brain.layers[0].push({ value: 0 });
+    //   this.brain.layers[0].push({ value: 0 });
+    //   this.brain.layers[0].push({ value: 0 });
+    //   this.brain.layers[0].push({ value: 0 });
+    // }
 
     this.brain.layers[0].push({
       value: (this.x - cWidth) / cWidth
