@@ -20,16 +20,24 @@ class Dot {
     this.population = [];
     this.consumed = false;
     this.children = 0;
+    this.generation = 0;
+    this.nearbyDistance = 25;
+    this.nearbyDotCount = 0;
   }
 
   CheckDots(pop) {
     let smallestdistance = 100000000;
+    this.nearbyDotCount = 0;
     for (
       let closeIndex = 0; closeIndex < pop.dots.length; closeIndex++
     ) {
       if (this !== pop.dots[closeIndex]) {
         // check closeness
         const distance = this.GetDistance(pop.dots[closeIndex]);
+        if (distance < this.nearbyDistance) {
+          this.nearbyDotCount++;
+        }
+
         if (distance < smallestdistance) {
           smallestdistance = distance;
           this.nearestDot = pop.dots[closeIndex];
@@ -43,9 +51,11 @@ class Dot {
   }
 
   CopyColor(dotToCopy) {
-    this.color.r = this.ColorBoundCheck(dotToCopy.color.r + Math.floor((Math.random() * 32) - 16));
-    this.color.g = this.ColorBoundCheck(dotToCopy.color.g + Math.floor((Math.random() * 32) - 16));
-    this.color.b = this.ColorBoundCheck(dotToCopy.color.b + Math.floor((Math.random() * 32) - 16));
+    do {
+      this.color.r = this.ColorBoundCheck(dotToCopy.color.r + Math.floor((Math.random() * 32) - 16));
+      this.color.g = this.ColorBoundCheck(dotToCopy.color.g + Math.floor((Math.random() * 32) - 16));
+      this.color.b = this.ColorBoundCheck(dotToCopy.color.b + Math.floor((Math.random() * 32) - 16));
+    } while ((0.2126 * this.color.r + 0.7152 * this.color.g + 0.0722 * this.color.b) < 100);
   }
 
   ColorBoundCheck(color) {
@@ -90,8 +100,8 @@ class Dot {
     let lastLayerIndex = this.brain.layers.length - 1;
     let lastLayer = this.brain.layers[lastLayerIndex];
     let vectorModifier = 1;// - (this.age * 0.001);
-    this.vector.x += ((lastLayer[5].value + lastLayer[6].value + lastLayer[7].value) - (lastLayer[0].value + lastLayer[1].value + lastLayer[2].value)) /3;
-    this.vector.y += ((lastLayer[2].value + lastLayer[4].value + lastLayer[7].value) - (lastLayer[0].value + lastLayer[3].value + lastLayer[5].value) ) /3;
+    this.vector.x += ((lastLayer[5].value + lastLayer[6].value + lastLayer[7].value) - (lastLayer[0].value + lastLayer[1].value + lastLayer[2].value)) / 3;
+    this.vector.y += ((lastLayer[2].value + lastLayer[4].value + lastLayer[7].value) - (lastLayer[0].value + lastLayer[3].value + lastLayer[5].value)) / 3;
     this.x += (this.vector.x * vectorModifier);
     this.y += (this.vector.y * vectorModifier);
 
@@ -151,7 +161,7 @@ class Dot {
       value: this.vector.y
     });
 
-   //// if (this.GetDistance(this.nearestDot) < 25) {
+    if (this.GetDistance(this.nearestDot) < this.nearbyDistance) {
       this.brain.layers[0].push({
         value: this.nearestDot.x - this.x
       });
@@ -171,14 +181,18 @@ class Dot {
       this.brain.layers[0].push({
         value: Math.abs(this.color.b - this.nearestDot.color.b)
       });
-    // } else {
-    //   this.brain.layers[0].push({ value: 0 });
-    //   this.brain.layers[0].push({ value: 0 });
-    //   this.brain.layers[0].push({ value: 0 });
-    //   this.brain.layers[0].push({ value: 0 });
-    //   this.brain.layers[0].push({ value: 0 });
-    //   this.brain.layers[0].push({ value: 0 });
-    // }
+    } else {
+      this.brain.layers[0].push({ value: 0 });
+      this.brain.layers[0].push({ value: 0 });
+      this.brain.layers[0].push({ value: 0 });
+      this.brain.layers[0].push({ value: 0 });
+      this.brain.layers[0].push({ value: 0 });
+      this.brain.layers[0].push({ value: 0 });
+    }
+
+    this.brain.layers[0].push({
+      value: this.nearbyDotCount
+    });
 
     this.brain.layers[0].push({
       value: (this.x - cWidth) / cWidth

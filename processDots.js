@@ -9,10 +9,10 @@ ctx.canvas.height = window.innerHeight;
 let centerX = ctx.canvas.width / 2;
 let centerY = ctx.canvas.height / 2;
 let pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
-let density = 1;
-let dotCount = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
+let density = 5;
+////let dotCount = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
 let lowerLimit = ((ctx.canvas.width * ctx.canvas.height) / 10000) * 1;
-let upperLimit = ((ctx.canvas.width * ctx.canvas.height) / 10000) * 4;
+let upperLimit = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
 
 let population = {
   data: {
@@ -47,11 +47,10 @@ function CopyDot(dotIndex, copyDot, offspring) {
   population.dots[dotIndex].CopyColor(copyDot);
 
   do {
-    let r = (Math.random() * 50);
-    // if(!offspring) {
-    //   r += 100
-    // }
-
+    let r = (Math.random() * 25);
+    if (offspring) {
+      r = (Math.random() * 50);
+    }
     const a = Math.random() * 6.28;
     population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + copyDot.x);
     population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + copyDot.y);
@@ -66,6 +65,7 @@ function CopyDot(dotIndex, copyDot, offspring) {
   population.dots[dotIndex].age = 0;
   population.dots[dotIndex].children = 0;
   population.dots[dotIndex].consumed = false;
+  population.dots[dotIndex].generation++;
 }
 
 function DoTheThings() {
@@ -133,8 +133,8 @@ function DoTheThings() {
         let copyIndex = Math.floor(Math.random() * population.dots.length);
         copyDot = population.dots[copyIndex];
         CopyDot(dotIndex, copyDot, false);
-        population.dots[dotIndex].x = Math.floor(Math.random() * ctx.canvas.width);
-        population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
+        ////population.dots[dotIndex].x = Math.floor(Math.random() * ctx.canvas.width);
+        ////population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
         //}
 
         // if (population.dots.length < lowerLimit) {
@@ -143,6 +143,10 @@ function DoTheThings() {
       }
 
     }
+  }
+
+  if (population.dots.length < upperLimit && fps > 40) {
+    AddDots(1);
   }
 }
 
@@ -186,8 +190,8 @@ function DrawGrid() {
     }
   }
 
-  DrawBrain(population.data.oldestAgeIndex, 20);
-  DrawBrain(population.data.mostChildrenIndex, 250);
+  DrawBrain(population.data.oldestAgeIndex, 30);
+  DrawBrain(population.data.mostChildrenIndex, 260);
 
   ctx.putImageData(pixels, 0, 0);
 
@@ -202,11 +206,10 @@ function DrawGrid() {
   ctx.fillText("fps: " + fps + ", DotCount: " + population.dots.length, 20, 15);
 
   ctx.fillStyle = "white";
-  ctx.fillText("oldest: " + population.data.oldestAgeIndex + " - " + population.data.oldestAge + " - " + population.dots[population.data.oldestAgeIndex].energy.toFixed(2), 20, 30);
-
+  ctx.fillText("oldest: " + population.data.oldestAgeIndex + " - " + population.data.oldestAge + " - " + population.dots[population.data.oldestAgeIndex].generation + " - " + population.dots[population.data.oldestAgeIndex].energy.toFixed(2), 20, 30);
 
   ctx.fillStyle = "lightgreen";
-  ctx.fillText("most prolific: " + population.data.mostChildrenIndex + " - " + population.data.mostChildren + " - " + population.dots[population.data.mostChildrenIndex].energy.toFixed(2), 20, 260);
+  ctx.fillText("most prolific: " + population.data.mostChildrenIndex + " - " + population.data.mostChildren + " - " + population.dots[population.data.mostChildrenIndex].generation + " - " + population.dots[population.data.mostChildrenIndex].energy.toFixed(2), 20, 260);
 
   ctx.stroke();
 
@@ -249,15 +252,19 @@ function CircleDot(dotIndex, color, size) {
 }
 
 function DrawBrain(dotIndex, offset) {
+  const scale = 1;
+  const squareSize = scale * 5;
+  const brainSize = 100 * scale;
+
   const dot = population.dots[dotIndex];
   const brain = dot.brain;
-  const layerSize = 200 / brain.layers.length;
+  const layerSize = brainSize / brain.layers.length;
   for (let layerIndex = 1; layerIndex < brain.layers.length - 1; layerIndex++) {
     const layer = brain.layers[layerIndex];
-    const neuronSize = 200 / layer.length;
+    const neuronSize = brainSize / layer.length;
     for (let neuronIndex = 0; neuronIndex < layer.length; neuronIndex++) {
       const neuronValue = layer[neuronIndex].value;
-      PlaceValueSquare(Math.floor(layerIndex * layerSize), Math.floor((1 + neuronIndex) * neuronSize + offset), dot.color, neuronValue, 10);
+      PlaceValueSquare(Math.floor(layerIndex * layerSize), Math.floor((1 + neuronIndex) * neuronSize + offset), dot.color, neuronValue, squareSize);
     }
   }
 
@@ -267,19 +274,24 @@ function DrawBrain(dotIndex, offset) {
   // // PlaceValueSquare(200, 75 + offset, dot.color, lastLayer[3].value, 10);  // up
   // // PlaceValueSquare(200, 125 + offset, dot.color, lastLayer[2].value, 10); // down
 
-  PlaceValueSquare(175, 75 + offset, dot.color, lastLayer[0].value, 10);
-  PlaceValueSquare(200, 75 + offset, dot.color, lastLayer[1].value, 10);
-  PlaceValueSquare(225, 75 + offset, dot.color, lastLayer[2].value, 10);
-  PlaceValueSquare(175, 100 + offset, dot.color, lastLayer[3].value, 10);
-  PlaceValueSquare(225, 100 + offset, dot.color, lastLayer[4].value, 10);
-  PlaceValueSquare(175, 125 + offset, dot.color, lastLayer[5].value, 10);
-  PlaceValueSquare(200, 125 + offset, dot.color, lastLayer[6].value, 10);
-  PlaceValueSquare(225, 125 + offset, dot.color, lastLayer[7].value, 10);
+  const xoffset = Math.floor(brainSize + (squareSize * 2));
+  const yoffset = Math.floor(offset + (brainSize / 2));
+  const dSize = Math.floor(squareSize * 3);
+  PlaceValueSquare(xoffset - dSize, yoffset - dSize, dot.color, lastLayer[0].value, squareSize);
+  PlaceValueSquare(xoffset, yoffset - dSize, dot.color, lastLayer[1].value, squareSize);
+  PlaceValueSquare(xoffset + dSize, yoffset - dSize, dot.color, lastLayer[2].value, squareSize);
+
+  PlaceValueSquare(xoffset - dSize, yoffset, dot.color, lastLayer[3].value, squareSize);
+  PlaceValueSquare(xoffset + dSize, yoffset, dot.color, lastLayer[4].value, squareSize);
+
+  PlaceValueSquare(xoffset - dSize, yoffset + dSize, dot.color, lastLayer[5].value, squareSize);
+  PlaceValueSquare(xoffset, yoffset + dSize, dot.color, lastLayer[6].value, squareSize);
+  PlaceValueSquare(xoffset + dSize, yoffset + dSize, dot.color, lastLayer[7].value, squareSize);
 
   const xVector = (lastLayer[0].value - lastLayer[1].value) * 3;
   const yVector = (lastLayer[2].value - lastLayer[3].value) * 3;
 
-  PlaceSquare(Math.floor(dot.vector.x + 200 + 2.5), Math.floor(dot.vector.y + 100 + 2.5 + offset), dot.color, 5);
+  PlaceSquare(Math.floor(dot.vector.x + xoffset), Math.floor(dot.vector.y + yoffset), dot.color, squareSize);
 
 }
 
