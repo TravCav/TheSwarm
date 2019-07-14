@@ -10,7 +10,7 @@ class Dot {
       b: 127, // Math.floor(Math.random() * 256) //127 + Math.floor(Math.random() * 127)
     };
     this.age = 0;
-    this.energy = Math.random() * 10;
+    this.energy = 10;////Math.random() * 10;
     this.tickRate = 0.02;
     this.nearestDot = null;
     this.nearestFood = null;
@@ -55,7 +55,7 @@ class Dot {
       this.color.r = this.ColorBoundCheck(dotToCopy.color.r + Math.floor((Math.random() * 32) - 16));
       this.color.g = this.ColorBoundCheck(dotToCopy.color.g + Math.floor((Math.random() * 32) - 16));
       this.color.b = this.ColorBoundCheck(dotToCopy.color.b + Math.floor((Math.random() * 32) - 16));
-    } while ((0.2126 * this.color.r + 0.7152 * this.color.g + 0.0722 * this.color.b) < 100);
+    } while ((0.2126 * this.color.r + 0.7152 * this.color.g + 0.0722 * this.color.b) < 32);
   }
 
   ColorBoundCheck(color) {
@@ -122,32 +122,16 @@ class Dot {
   GetInputs(cWidth, cHeight) {
     this.brain.layers[0] = [];
 
+    // previous outputs
     let outputLayer = this.brain.layers.length - 1;
-    this.brain.layers[0].push({
-      value: this.brain.layers[outputLayer][0].value
-    });
-    this.brain.layers[0].push({
-      value: this.brain.layers[outputLayer][1].value
-    });
-    this.brain.layers[0].push({
-      value: this.brain.layers[outputLayer][2].value
-    });
-    this.brain.layers[0].push({
-      value: this.brain.layers[outputLayer][3].value
-    });
-    this.brain.layers[0].push({
-      value: this.brain.layers[outputLayer][4].value
-    });
-    this.brain.layers[0].push({
-      value: this.brain.layers[outputLayer][5].value
-    });
-    this.brain.layers[0].push({
-      value: this.brain.layers[outputLayer][6].value
-    });
-    this.brain.layers[0].push({
-      value: this.brain.layers[outputLayer][7].value
-    });
+    let outputLayerLen = this.brain.layers[outputLayer].length
+    for (let index = 0; index < outputLayerLen; index++) {
+      this.brain.layers[0].push({
+        value: this.brain.layers[outputLayer][index].value
+      });
+    }
 
+    // know thyself
     this.brain.layers[0].push({
       value: this.age
     });
@@ -161,6 +145,7 @@ class Dot {
       value: this.vector.y
     });
 
+    // closest dot that it can see. if any.
     if (this.GetDistance(this.nearestDot) < this.nearbyDistance) {
       this.brain.layers[0].push({
         value: this.nearestDot.x - this.x
@@ -182,6 +167,7 @@ class Dot {
         value: Math.abs(this.color.b - this.nearestDot.color.b)
       });
     } else {
+      // can't see anything.
       this.brain.layers[0].push({ value: 0 });
       this.brain.layers[0].push({ value: 0 });
       this.brain.layers[0].push({ value: 0 });
@@ -190,26 +176,52 @@ class Dot {
       this.brain.layers[0].push({ value: 0 });
     }
 
+    // what's around me
     this.brain.layers[0].push({
       value: this.nearbyDotCount
     });
 
+    const canvasH = cHeight * 2;
+    const canvasW = cWidth * 2;
+    // near the left edge.
     this.brain.layers[0].push({
-      value: (this.x - cWidth) / cWidth
+      value: this.x > this.nearbyDistance ? 0 : this.nearbyDistance - this.x
     });
 
+    // near the right edge.
     this.brain.layers[0].push({
-      value: (this.y - cHeight) / cHeight
+      value: (canvasW - this.x) > this.nearbyDistance ? 0 : canvasW - this.x
     });
 
-    let lastLayer = this.brain.layers.length - 2;
-    for (let index = 0; index < this.brain.layers[lastLayer].length; index++) {
-      this.brain.layers[0].push({
-        value: this.brain.layers[lastLayer][index].value
-      });
-    }
 
+    // near the top edge.
+    this.brain.layers[0].push({
+      value: this.y > this.nearbyDistance ? 0 : this.nearbyDistance - this.y
+    });
 
+    // near the bottom edge.
+    this.brain.layers[0].push({
+      value: (canvasH - this.y) > this.nearbyDistance ? 0 : canvasH - this.y
+    });
+
+    // // percentage of screen from center. horizontally
+    // this.brain.layers[0].push({
+    //   value: (this.x - cWidth) / cWidth
+    // });
+
+    // // percentage of screen from center. vertically
+    // this.brain.layers[0].push({
+    //   value: (this.y - cHeight) / cHeight
+    // });
+
+    // // the entire last layer before the output. wtf is this?
+    // let lastLayer = this.brain.layers.length - 2;
+    // let lastLayerLen = this.brain.layers[lastLayer].length;
+    // for (let index = 0; index < lastLayerLen; index++) {
+    //   this.brain.layers[0].push({
+    //     value: this.brain.layers[lastLayer][index].value
+    //   });
+    // }
   }
 
   ThinkAboutStuff(cWidth, cHeight) {

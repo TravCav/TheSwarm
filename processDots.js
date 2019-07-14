@@ -325,7 +325,7 @@ function PlaceSquare(x, y, color, s) {
 }
 
 
-AddDots(50);
+AddDots(100);
 for (let i = 0; i < 120; i++) {
   times.push(performance.now());
 }
