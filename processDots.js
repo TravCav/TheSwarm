@@ -48,9 +48,9 @@ function CopyDot(dotIndex, copyDot, offspring) {
 
   do {
     let r = (Math.random() * 25);
-    if (offspring) {
-      r = (Math.random() * 50);
-    }
+    // if (offspring) {
+    //   r = (Math.random() * 50);
+    // }
     const a = Math.random() * 6.28;
     population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + copyDot.x);
     population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + copyDot.y);
@@ -252,7 +252,7 @@ function CircleDot(dotIndex, color, size) {
 }
 
 function DrawBrain(dotIndex, offset) {
-  const scale = 1;
+  const scale = 2;
   const squareSize = scale * 5;
   const brainSize = 100 * scale;
 
