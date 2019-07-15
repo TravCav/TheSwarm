@@ -252,7 +252,7 @@ function CircleDot(dotIndex, color, size) {
 }
 
 function DrawBrain(dotIndex, offset) {
-  const scale = 2;
+  const scale = 1.5;
   const squareSize = scale * 5;
   const brainSize = 100 * scale;
 

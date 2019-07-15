@@ -55,7 +55,7 @@ class Dot {
       this.color.r = this.ColorBoundCheck(dotToCopy.color.r + Math.floor((Math.random() * 32) - 16));
       this.color.g = this.ColorBoundCheck(dotToCopy.color.g + Math.floor((Math.random() * 32) - 16));
       this.color.b = this.ColorBoundCheck(dotToCopy.color.b + Math.floor((Math.random() * 32) - 16));
-    } while ((0.2126 * this.color.r + 0.7152 * this.color.g + 0.0722 * this.color.b) < 32);
+    } while ((0.2126 * this.color.r + 0.7152 * this.color.g + 0.0722 * this.color.b) < 64);
   }
 
   ColorBoundCheck(color) {
