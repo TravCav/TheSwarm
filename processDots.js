@@ -46,16 +46,21 @@ function CopyDot(dotIndex, copyDot, offspring) {
 
   population.dots[dotIndex].CopyColor(copyDot);
 
-  do {
-    let r = (Math.random() * 25);
-    // if (offspring) {
-    //   r = (Math.random() * 50);
-    // }
-    const a = Math.random() * 6.28;
-    population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + copyDot.x);
-    population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + copyDot.y);
+  if (offspring) {
+    do {
+      let r = (Math.random() * 25);
+      // if (offspring) {
+      //   r = (Math.random() * 50);
+      // }
+      const a = Math.random() * 6.28;
+      population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + copyDot.x);
+      population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + copyDot.y);
 
-  } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
+    } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
+  } else {
+    population.dots[dotIndex].x = Math.floor(Math.random() * ctx.canvas.width);
+    population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
+  }
 
   population.dots[dotIndex].brain.Mutate();
 
