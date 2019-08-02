@@ -9,7 +9,7 @@ ctx.canvas.height = window.innerHeight;
 let centerX = ctx.canvas.width / 2;
 let centerY = ctx.canvas.height / 2;
 let pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
-let density = 5;
+let density = 100;
 ////let dotCount = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
 let lowerLimit = ((ctx.canvas.width * ctx.canvas.height) / 10000) * 1;
 let upperLimit = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
@@ -46,7 +46,7 @@ function CopyDot(dotIndex, copyDot, offspring) {
 
   population.dots[dotIndex].CopyColor(copyDot);
 
-  if (offspring) {
+  //if (offspring) {
     do {
       let r = (Math.random() * 25);
       // if (offspring) {
@@ -57,10 +57,10 @@ function CopyDot(dotIndex, copyDot, offspring) {
       population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + copyDot.y);
 
     } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
-  } else {
-    population.dots[dotIndex].x = Math.floor(Math.random() * ctx.canvas.width);
-    population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
-  }
+  // } else {
+  //   population.dots[dotIndex].x = Math.floor(Math.random() * ctx.canvas.width);
+  //   population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
+  // }
 
   population.dots[dotIndex].brain.Mutate();
 

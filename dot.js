@@ -181,28 +181,28 @@ class Dot {
       value: this.nearbyDotCount
     });
 
-    const canvasH = cHeight * 2;
-    const canvasW = cWidth * 2;
-    // near the left edge.
-    this.brain.layers[0].push({
-      value: this.x > this.nearbyDistance ? 0 : this.nearbyDistance - this.x
-    });
+    // // const canvasH = cHeight * 2;
+    // // const canvasW = cWidth * 2;
+    // // // near the left edge.
+    // // this.brain.layers[0].push({
+    // //   value: this.x > this.nearbyDistance ? 0 : this.nearbyDistance - this.x
+    // // });
 
-    // near the right edge.
-    this.brain.layers[0].push({
-      value: (canvasW - this.x) > this.nearbyDistance ? 0 : canvasW - this.x
-    });
+    // // // near the right edge.
+    // // this.brain.layers[0].push({
+    // //   value: (canvasW - this.x) > this.nearbyDistance ? 0 : canvasW - this.x
+    // // });
 
 
-    // near the top edge.
-    this.brain.layers[0].push({
-      value: this.y > this.nearbyDistance ? 0 : this.nearbyDistance - this.y
-    });
+    // // // near the top edge.
+    // // this.brain.layers[0].push({
+    // //   value: this.y > this.nearbyDistance ? 0 : this.nearbyDistance - this.y
+    // // });
 
-    // near the bottom edge.
-    this.brain.layers[0].push({
-      value: (canvasH - this.y) > this.nearbyDistance ? 0 : canvasH - this.y
-    });
+    // // // near the bottom edge.
+    // // this.brain.layers[0].push({
+    // //   value: (canvasH - this.y) > this.nearbyDistance ? 0 : canvasH - this.y
+    // // });
 
     // // percentage of screen from center. horizontally
     // this.brain.layers[0].push({
