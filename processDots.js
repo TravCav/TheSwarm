@@ -269,7 +269,8 @@ function DrawBrain(dotIndex, offset) {
     const neuronSize = brainSize / layer.length;
     for (let neuronIndex = 0; neuronIndex < layer.length; neuronIndex++) {
       const neuronValue = layer[neuronIndex].value;
-      PlaceValueSquare(Math.floor(layerIndex * layerSize), Math.floor((1 + neuronIndex) * neuronSize + offset), dot.color, neuronValue, squareSize);
+      let upshift = (brainSize - ((squareSize * layer.length))) / (scale * layer.length);
+      PlaceValueSquare(Math.floor(layerIndex * layerSize), Math.floor((1 + neuronIndex) * neuronSize + offset - upshift), dot.color, neuronValue, squareSize);
     }
   }
 
