@@ -127,6 +127,10 @@ function DoTheThings() {
           AddDots(1);
           CopyDot(population.dots.length - 1, copyDot, true);
         }
+        // Split the energy
+        population.dots[dotIndex].energy += copyDot.energy * 0.1;
+        copyDot.energy *= 0.90;
+
       } else {
         // let copyIndex = Math.floor(Math.random() * population.dots.length);
         // copyDot = population.dots[copyIndex];

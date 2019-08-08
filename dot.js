@@ -5,12 +5,12 @@ class Dot {
       y: 0
     };
     this.color = {
-      r: 127, // Math.floor(Math.random() * 256), //127 + Math.floor(Math.random() * 127),
-      g: 127, // Math.floor(Math.random() * 256), //127 + Math.floor(Math.random() * 127),
-      b: 127, // Math.floor(Math.random() * 256) //127 + Math.floor(Math.random() * 127)
+      r: 96, // Math.floor(Math.random() * 256), //127 + Math.floor(Math.random() * 127),
+      g: 96, // Math.floor(Math.random() * 256), //127 + Math.floor(Math.random() * 127),
+      b: 96, // Math.floor(Math.random() * 256) //127 + Math.floor(Math.random() * 127)
     };
     this.age = 0;
-    this.energy = 10;////Math.random() * 10;
+    this.energy = 20;////Math.random() * 10;
     this.tickRate = 0.02;
     this.nearestDot = null;
     this.nearestFood = null;
@@ -23,6 +23,7 @@ class Dot {
     this.generation = 0;
     this.nearbyDistance = 25;
     this.nearbyDotCount = 0;
+    this.energyDot = false;
   }
 
   CheckDots(pop) {
@@ -55,7 +56,8 @@ class Dot {
       this.color.r = this.ColorBoundCheck(dotToCopy.color.r + Math.floor((Math.random() * 32) - 16));
       this.color.g = this.ColorBoundCheck(dotToCopy.color.g + Math.floor((Math.random() * 32) - 16));
       this.color.b = this.ColorBoundCheck(dotToCopy.color.b + Math.floor((Math.random() * 32) - 16));
-    } while ((0.2126 * this.color.r + 0.7152 * this.color.g + 0.0722 * this.color.b) < 64);
+    //} while ((0.2126 * this.color.r + 0.7152 * this.color.g + 0.0722 * this.color.b) < 64);
+    } while (this.color.r < 96 || this.color.g < 96 || this.color.b < 96);
   }
 
   ColorBoundCheck(color) {
