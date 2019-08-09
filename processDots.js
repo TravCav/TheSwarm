@@ -47,16 +47,16 @@ function CopyDot(dotIndex, copyDot, offspring) {
   population.dots[dotIndex].CopyColor(copyDot);
 
   //if (offspring) {
-    do {
-      let r = (Math.random() * 25);
-      // if (offspring) {
-      //   r = (Math.random() * 50);
-      // }
-      const a = Math.random() * 6.28;
-      population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + copyDot.x);
-      population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + copyDot.y);
+  do {
+    let r = (Math.random() * 25);
+    // if (offspring) {
+    //   r = (Math.random() * 50);
+    // }
+    const a = Math.random() * 6.28;
+    population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + copyDot.x);
+    population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + copyDot.y);
 
-    } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
+  } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
   // } else {
   //   population.dots[dotIndex].x = Math.floor(Math.random() * ctx.canvas.width);
   //   population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
@@ -120,7 +120,7 @@ function DoTheThings() {
       let copyDot = {};
 
       // got et
-      if (population.dots[dotIndex].consumed === true) {
+      if (population.dots[dotIndex].consumed === true && population.dots[dotIndex].nearestDot.wantBabby) {
         copyDot = population.dots[dotIndex].nearestDot;
         CopyDot(dotIndex, copyDot, true);
         if (population.dots.length < upperLimit && fps > 40) {
@@ -130,7 +130,7 @@ function DoTheThings() {
         // Split the energy
         population.dots[dotIndex].energy += copyDot.energy * 0.1;
         copyDot.energy *= 0.90;
-
+        copyDot.children++;
       } else {
         // let copyIndex = Math.floor(Math.random() * population.dots.length);
         // copyDot = population.dots[copyIndex];
@@ -215,10 +215,10 @@ function DrawGrid() {
   ctx.fillText("fps: " + fps + ", DotCount: " + population.dots.length, 20, 15);
 
   ctx.fillStyle = "white";
-  ctx.fillText("oldest: " + population.data.oldestAgeIndex + " - " + population.data.oldestAge + " - " + population.dots[population.data.oldestAgeIndex].generation + " - " + population.dots[population.data.oldestAgeIndex].energy.toFixed(2), 20, 30);
+  ctx.fillText("oldest: " + population.data.oldestAgeIndex + " - " + population.dots[population.data.oldestAgeIndex].age + " - " + population.dots[population.data.oldestAgeIndex].generation + " - " + population.dots[population.data.oldestAgeIndex].energy.toFixed(2), 20, 30);
 
   ctx.fillStyle = "lightgreen";
-  ctx.fillText("most prolific: " + population.data.mostChildrenIndex + " - " + population.data.mostChildren + " - " + population.dots[population.data.mostChildrenIndex].generation + " - " + population.dots[population.data.mostChildrenIndex].energy.toFixed(2), 20, 260);
+  ctx.fillText("most prolific: " + population.data.mostChildrenIndex + " - " + population.dots[population.data.mostChildrenIndex].dotsEaten + " - " + population.dots[population.data.mostChildrenIndex].children + " - " + population.dots[population.data.mostChildrenIndex].generation + " - " + population.dots[population.data.mostChildrenIndex].energy.toFixed(2), 20, 260);
 
   ctx.stroke();
 
@@ -297,6 +297,8 @@ function DrawBrain(dotIndex, offset) {
   PlaceValueSquare(xoffset - dSize, yoffset + dSize, dot.color, lastLayer[5].value, squareSize);
   PlaceValueSquare(xoffset, yoffset + dSize, dot.color, lastLayer[6].value, squareSize);
   PlaceValueSquare(xoffset + dSize, yoffset + dSize, dot.color, lastLayer[7].value, squareSize);
+
+  PlaceValueSquare(xoffset, yoffset + dSize + dSize, dot.color, lastLayer[8].value, squareSize);
 
   const xVector = (lastLayer[0].value - lastLayer[1].value) * 3;
   const yVector = (lastLayer[2].value - lastLayer[3].value) * 3;

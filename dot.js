@@ -23,7 +23,8 @@ class Dot {
     this.generation = 0;
     this.nearbyDistance = 25;
     this.nearbyDotCount = 0;
-    this.energyDot = false;
+    this.wantBabby = true;
+    this.dotsEaten = 0;
   }
 
   CheckDots(pop) {
@@ -77,7 +78,8 @@ class Dot {
           this.consumed = true;
           return true;
         } else {
-          this.children++;
+          // this.children++;
+          this.dotsEaten++;
           this.energy += this.nearestDot.energy;
           // if (this.energy > 100) {
           //   this.energy = 100;
@@ -111,6 +113,7 @@ class Dot {
     this.energy -= this.tickRate + lastVector;// + (this.age/10000);
     //this.energy -= (lastVector  * (1 + (this.age/10000))) + (this.age/10000);
     //this.energy -= this.tickRate + (this.tickRate / this.age) + (lastVector  * (1 + (this.age/1000)));// + (this.age/10000);
+    this.wantBabby = (lastLayer[7].value > 0)
     this.age++;
   }
 
