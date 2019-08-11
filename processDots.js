@@ -120,17 +120,24 @@ function DoTheThings() {
       let copyDot = {};
 
       // got et
-      if (population.dots[dotIndex].consumed === true && population.dots[dotIndex].nearestDot.wantBabby) {
-        copyDot = population.dots[dotIndex].nearestDot;
-        CopyDot(dotIndex, copyDot, true);
-        if (population.dots.length < upperLimit && fps > 40) {
-          AddDots(1);
-          CopyDot(population.dots.length - 1, copyDot, true);
+      if (population.dots[dotIndex].consumed === true) {
+        if (population.dots[dotIndex].nearestDot.wantBabby) {
+          copyDot = population.dots[dotIndex].nearestDot;
+          CopyDot(dotIndex, copyDot, true);
+          if (population.dots.length < upperLimit && fps > 40) {
+            AddDots(1);
+            CopyDot(population.dots.length - 1, copyDot, true);
+          }
+          // Split the energy
+          population.dots[dotIndex].energy += copyDot.energy * 0.1;
+          copyDot.energy *= 0.90;
+          copyDot.children++;
+        } else {
+          copyDot = population.dots[dotIndex];
+          CopyDot(dotIndex, copyDot, false);
+          population.dots[dotIndex].x = Math.floor(Math.random() * ctx.canvas.width);
+          population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
         }
-        // Split the energy
-        population.dots[dotIndex].energy += copyDot.energy * 0.1;
-        copyDot.energy *= 0.90;
-        copyDot.children++;
       } else {
         // let copyIndex = Math.floor(Math.random() * population.dots.length);
         // copyDot = population.dots[copyIndex];
