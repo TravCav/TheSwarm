@@ -10,7 +10,6 @@ let centerX = ctx.canvas.width / 2;
 let centerY = ctx.canvas.height / 2;
 let pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
 let density = 100;
-////let dotCount = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
 let lowerLimit = ((ctx.canvas.width * ctx.canvas.height) / 10000) * 1;
 let upperLimit = ((ctx.canvas.width * ctx.canvas.height) / 10000) * density;
 
@@ -18,7 +17,6 @@ let population = {
   data: {
     mostEnergy: 0,
     mostEnergyIndex: 0,
-    highestAverage: 0,
     averageAge: 0,
     oldestAge: 0,
     oldestAgeIndex: 0,
@@ -32,10 +30,8 @@ function AddDots(dotsToAdd) {
   for (let i = 0; i < dotsToAdd; i++) {
     population.dots.push(new Dot());
 
-    //if (i < dotsToAdd * 0.90) { //===0) {
     population.dots[i].brain.Restore();
     population.dots[i].brain.Mutate();
-    //}
   }
 }
 
@@ -44,23 +40,15 @@ function CopyDot(dotIndex, copyDot, offspring) {
     copyDot.brain
   );
 
-  population.dots[dotIndex].CopyColor(copyDot);
+  population.dots[dotIndex].color = TweakColor(copyDot.color);
 
-  //if (offspring) {
   do {
     let r = (Math.random() * 25);
-    // if (offspring) {
-    //   r = (Math.random() * 50);
-    // }
     const a = Math.random() * 6.28;
     population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + copyDot.x);
     population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + copyDot.y);
 
   } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
-  // } else {
-  //   population.dots[dotIndex].x = Math.floor(Math.random() * ctx.canvas.width);
-  //   population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
-  // }
 
   population.dots[dotIndex].brain.Mutate();
 
@@ -104,14 +92,15 @@ function DoTheThings() {
     }
   }
 
-  let averageEnergy = totalEnergy / population.dots.length;
-  if (averageEnergy > population.data.highestAverage) {
-    population.data.highestAverage = averageEnergy;
-  }
+  CheckForDeaths();
 
-  for (
-    let dotIndex = 0; dotIndex < population.dots.length; dotIndex++
-  ) {
+  if (population.dots.length < upperLimit && fps > 40) {
+    AddDots(1);
+  }
+}
+
+function CheckForDeaths() {
+  for (let dotIndex = 0; dotIndex < population.dots.length; dotIndex++) {
     if (population.dots[dotIndex].CheckDeath() === true) {
       if (population.dots[dotIndex].children >= population.data.mostChildren) {
         population.dots[dotIndex].brain.Save();
@@ -139,30 +128,12 @@ function DoTheThings() {
           population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
         }
       } else {
-        // let copyIndex = Math.floor(Math.random() * population.dots.length);
-        // copyDot = population.dots[copyIndex];
-        // CopyDot(dotIndex, copyDot);
-        // if (population.dots.length > lowerLimit && population.data.mostChildrenIndex != dotIndex && population.data.oldestAgeIndex != dotIndex) {
-        //   population.dots.splice(dotIndex);
-        // }
-        // else {
         let copyIndex = Math.floor(Math.random() * population.dots.length);
         copyDot = population.dots[copyIndex];
         CopyDot(dotIndex, copyDot, false);
-        ////population.dots[dotIndex].x = Math.floor(Math.random() * ctx.canvas.width);
-        ////population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
-        //}
-
-        // if (population.dots.length < lowerLimit) {
-        //   AddDots(1);
-        // }
       }
 
     }
-  }
-
-  if (population.dots.length < upperLimit && fps > 40) {
-    AddDots(1);
   }
 }
 
@@ -175,14 +146,10 @@ function DrawGrid() {
   // clear screen
   pixels = ctx.createImageData(ctx.canvas.width, ctx.canvas.height);
 
-  ////let index = 0;
-
   // draw
   for (let i = 0; i < population.dots.length; i++) {
     let x = Math.floor(population.dots[i].x);
     let y = Math.floor(population.dots[i].y);
-
-    ////let dotSize = 1;
 
     if (!(
       x < 1 ||
@@ -234,14 +201,6 @@ function DrawGrid() {
   CircleDot(population.data.oldestAgeIndex, "white", 25);
   CircleDot(population.data.mostChildrenIndex, "green", 20);
 
-  // if (fps < 24 && population.data.mostChildrenIndex != population.dots.length - 1 && population.data.oldestAgeIndex != population.dots.length - 1) {
-  //   population.dots.splice(population.dots.length - 1);
-  // }
-
-  // if (fps > 40 && population.dots.length < ((ctx.canvas.width * ctx.canvas.height) / 10000) * density) {
-  //   AddDots(1);
-  // }
-
   setTimeout(function () {
     DrawGrid();
   }, 1);
@@ -286,10 +245,6 @@ function DrawBrain(dotIndex, offset) {
   }
 
   const lastLayer = dot.brain.layers[brain.layers.length - 1];
-  // // PlaceValueSquare(175, 100 + offset, dot.color, lastLayer[1].value, 10);  // left
-  // // PlaceValueSquare(225, 100 + offset, dot.color, lastLayer[0].value, 10);  //right
-  // // PlaceValueSquare(200, 75 + offset, dot.color, lastLayer[3].value, 10);  // up
-  // // PlaceValueSquare(200, 125 + offset, dot.color, lastLayer[2].value, 10); // down
 
   const xoffset = Math.floor(brainSize + (squareSize * 2));
   const yoffset = Math.floor(offset + (brainSize / 2));
@@ -343,6 +298,20 @@ function PlaceSquare(x, y, color, s) {
   }
 }
 
+function TweakColor(color) {
+  let newColor = { r: color.r, g: color.g, b: color.b };
+  newColor.r = ColorBoundCheck(color.r + Math.floor((Math.random() * 32) - 16));
+  newColor.g = ColorBoundCheck(color.g + Math.floor((Math.random() * 32) - 16));
+  newColor.b = ColorBoundCheck(color.b + Math.floor((Math.random() * 32) - 16));
+  return newColor;
+
+  function ColorBoundCheck(color) {
+    let newColor = color;
+    if (newColor > 255) { return 255; }
+    if (newColor < 96) { return 96; }
+    return newColor;
+  }
+}
 
 AddDots(100);
 for (let i = 0; i < 120; i++) {
