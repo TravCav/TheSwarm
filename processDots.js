@@ -235,8 +235,8 @@ function DrawGrid() {
   ctx.fillStyle = "white";
   ctx.fillText("fps: " + fps + ", DotCount: " + population.dots.length, 10, 15);
 
-  ShowInfo(population.data.oldestAgeIndex, 30, "white");
-  ShowInfo(population.data.mostChildrenIndex, 270, "lightgreen");
+  ShowInfo("Oldest", population.data.oldestAgeIndex, 30, "white");
+  ShowInfo("Most Prolific", population.data.mostChildrenIndex, 270, "lightgreen");
 
   ctx.stroke();
 
@@ -250,9 +250,9 @@ function DrawGrid() {
   return;
 }
 
-function ShowInfo(dotIndex, yOffset, color) {
+function ShowInfo(dotLabel, dotIndex, yOffset, color) {
   ctx.fillStyle = color;
-  ctx.fillText("Oldest", 10, yOffset += 10);
+  ctx.fillText(dotLabel, 10, yOffset += 10);
   ctx.fillText("Dot: " + dotIndex, 10, yOffset += 10);
   ctx.fillText("Gen: " + population.dots[dotIndex].generation, 10, yOffset += 10);
   ctx.fillText("Age: " + population.dots[dotIndex].age, 10, yOffset += 10);
