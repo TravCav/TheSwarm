@@ -18,7 +18,7 @@ class Dot {
     this.y = Math.random() * ctx.canvas.height;
     this.brain = new Brain();
     this.population = [];
-    this.consumed = false;
+    this.dead = false;
     this.children = 0;
     this.generation = 0;
     this.nearbyDistance = 25;
@@ -48,29 +48,29 @@ class Dot {
     }
   }
 
-  CheckDeath() {
-    return this.Consumed() || this.energy < 0 || this.WallDeath();
-  }
+  // CheckDeath() {
+  //   return this.Consumed() || this.energy < 0 || this.WallDeath();
+  // }
 
-  Consumed() {
-    if (this.nearestDot !== null) {
-      const dx = this.x - this.nearestDot.x;
-      const dy = this.y - this.nearestDot.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < 1) {
-        if (this.energy < this.nearestDot.energy) {
-          this.energy = -2;
-          this.consumed = true;
-          return true;
-        } else {
-          this.dotsEaten++;
-          this.energy += this.nearestDot.energy;
-          return false;
-        }
-      }
-    }
-    return false;
-  }
+  // Consumed() {
+  //   if (this.nearestDot !== null) {
+  //     const dx = this.x - this.nearestDot.x;
+  //     const dy = this.y - this.nearestDot.y;
+  //     const distance = Math.sqrt(dx * dx + dy * dy);
+  //     if (distance < 1) {
+  //       if (this.energy < this.nearestDot.energy) {
+  //         this.energy = -2;
+  //         this.consumed = true;
+  //         return true;
+  //       } else {
+  //         this.dotsEaten++;
+  //         this.energy += this.nearestDot.energy;
+  //         return false;
+  //       }
+  //     }
+  //   }
+  //   return false;
+  // }
 
   DifferentColor(otherColor) {
     return (
@@ -171,12 +171,12 @@ class Dot {
     this.brain.ProcessLayers();
   }
 
-  WallDeath() {
-    return (
-      this.x > ctx.canvas.width ||
-      this.x < 1 ||
-      this.y > ctx.canvas.height ||
-      this.y < 1
-    );
-  }
+  // WallDeath() {
+  //   return (
+  //     this.x > ctx.canvas.width ||
+  //     this.x < 1 ||
+  //     this.y > ctx.canvas.height ||
+  //     this.y < 1
+  //   );
+  // }
 }

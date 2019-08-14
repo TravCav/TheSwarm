@@ -43,11 +43,12 @@ function CopyDot(dotIndex, copyDot, offspring) {
   population.dots[dotIndex].color = TweakColor(copyDot.color);
 
   do {
-    let r = (Math.random() * 25);
+    let r = (Math.random() * 13) + 12;
     const a = Math.random() * 6.28;
     population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + copyDot.x);
     population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + copyDot.y);
-
+    // // population.dots[dotIndex].x = Math.floor(Math.random() * ctx.canvas.width);
+    // // population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
   } while (population.dots[dotIndex].x < 0 && population.dots[dotIndex].x > ctx.canvas.width && population.dots[dotIndex].y < 0 && population.dots[dotIndex].y > ctx.canvas.height);
 
   population.dots[dotIndex].brain.Mutate();
@@ -57,46 +58,42 @@ function CopyDot(dotIndex, copyDot, offspring) {
   population.dots[dotIndex].energy = 2;
   population.dots[dotIndex].age = 0;
   population.dots[dotIndex].children = 0;
-  population.dots[dotIndex].consumed = false;
+  population.dots[dotIndex].dead = false;
   population.dots[dotIndex].generation++;
 }
 
-function CheckWallDeath(x,y) {
-  return (
-    this.x > ctx.canvas.width ||
-    this.x < 1 ||
-    this.y > ctx.canvas.height ||
-    this.y < 1
-  );
+function IsOffScreen(x, y) {
+  return x > ctx.canvas.width || x < 1 || y > ctx.canvas.height || y < 1;
 }
 
 function CheckForDeaths() {
   for (let dotIndex = 0; dotIndex < population.dots.length; dotIndex++) {
-    if (CheckDeath(dotIndex) === true) {
-      if (population.dots[dotIndex].children >= population.data.mostChildren) {
-        population.dots[dotIndex].brain.Save();
+    let thisDot = population.dots[dotIndex];
+    if (Killed(dotIndex) || thisDot.energy < 0 || IsOffScreen(thisDot.x, thisDot.y)) {
+      if (thisDot.children >= population.data.mostChildren) {
+        thisDot.brain.Save();
       }
 
       let copyDot = {};
 
       // got et
-      if (population.dots[dotIndex].consumed === true) {
-        if (population.dots[dotIndex].nearestDot.wantBabby) {
-          copyDot = population.dots[dotIndex].nearestDot;
+      if (thisDot.dead === true) {
+        if (thisDot.nearestDot.wantBabby) {
+          copyDot = thisDot.nearestDot;
           CopyDot(dotIndex, copyDot, true);
           if (population.dots.length < upperLimit && fps > 40) {
             AddDots(1);
             CopyDot(population.dots.length - 1, copyDot, true);
           }
           // Split the energy
-          population.dots[dotIndex].energy += copyDot.energy * 0.1;
+          thisDot.energy += copyDot.energy * 0.1;
           copyDot.energy *= 0.90;
           copyDot.children++;
         } else {
-          copyDot = population.dots[dotIndex];
+          copyDot = thisDot;
           CopyDot(dotIndex, copyDot, false);
-          population.dots[dotIndex].x = Math.floor(Math.random() * ctx.canvas.width);
-          population.dots[dotIndex].y = Math.floor(Math.random() * ctx.canvas.height);
+          thisDot.x = Math.floor(Math.random() * ctx.canvas.width);
+          thisDot.y = Math.floor(Math.random() * ctx.canvas.height);
         }
       } else {
         let copyIndex = Math.floor(Math.random() * population.dots.length);
@@ -108,30 +105,26 @@ function CheckForDeaths() {
   }
 }
 
-
-function CheckDeath(dotIndex) {
-  return Consumed(dotIndex) || population.dots[dotIndex].energy < 0 || population.dots[dotIndex].WallDeath();
-}
-
-function Consumed(dotIndex) {
-  if (population.dots[dotIndex].nearestDot !== null) {
-    const dx = population.dots[dotIndex].x - population.dots[dotIndex].nearestDot.x;
-    const dy = population.dots[dotIndex].y - population.dots[dotIndex].nearestDot.y;
+function Killed(dotIndex) {
+  let thisDot = population.dots[dotIndex];
+  if (thisDot.nearestDot !== null) {
+    const dx = thisDot.x - thisDot.nearestDot.x;
+    const dy = thisDot.y - thisDot.nearestDot.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
     if (distance < 1) {
-      if (population.dots[dotIndex].energy < population.dots[dotIndex].nearestDot.energy) {
-        population.dots[dotIndex].energy = -2;
-        population.dots[dotIndex].consumed = true;
-        return true;
+      thisDot.energy -= thisDot.energy * 0.1;
+      //if (thisDot.energy < thisDot.nearestDot.energy) {
+      if (thisDot.energy < 0) {
+        //thisDot.energy = -2;
+        thisDot.dead = true;
       } else {
-        population.dots[dotIndex].dotsEaten++;
-        population.dots[dotIndex].energy += population.dots[dotIndex].nearestDot.energy;
-        return false;
+        thisDot.dotsEaten++;
+        thisDot.energy += 2;//thisDot.nearestDot.energy;
       }
     }
   }
 
-  return false;
+  return thisDot.dead;
 }
 
 function DoTheThings() {
