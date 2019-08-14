@@ -61,9 +61,18 @@ function CopyDot(dotIndex, copyDot, offspring) {
   population.dots[dotIndex].generation++;
 }
 
+function CheckWallDeath(x,y) {
+  return (
+    this.x > ctx.canvas.width ||
+    this.x < 1 ||
+    this.y > ctx.canvas.height ||
+    this.y < 1
+  );
+}
+
 function CheckForDeaths() {
   for (let dotIndex = 0; dotIndex < population.dots.length; dotIndex++) {
-    if (population.dots[dotIndex].CheckDeath() === true) {
+    if (CheckDeath(dotIndex) === true) {
       if (population.dots[dotIndex].children >= population.data.mostChildren) {
         population.dots[dotIndex].brain.Save();
       }
@@ -97,6 +106,32 @@ function CheckForDeaths() {
 
     }
   }
+}
+
+
+function CheckDeath(dotIndex) {
+  return Consumed(dotIndex) || population.dots[dotIndex].energy < 0 || population.dots[dotIndex].WallDeath();
+}
+
+function Consumed(dotIndex) {
+  if (population.dots[dotIndex].nearestDot !== null) {
+    const dx = population.dots[dotIndex].x - population.dots[dotIndex].nearestDot.x;
+    const dy = population.dots[dotIndex].y - population.dots[dotIndex].nearestDot.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < 1) {
+      if (population.dots[dotIndex].energy < population.dots[dotIndex].nearestDot.energy) {
+        population.dots[dotIndex].energy = -2;
+        population.dots[dotIndex].consumed = true;
+        return true;
+      } else {
+        population.dots[dotIndex].dotsEaten++;
+        population.dots[dotIndex].energy += population.dots[dotIndex].nearestDot.energy;
+        return false;
+      }
+    }
+  }
+
+  return false;
 }
 
 function DoTheThings() {
