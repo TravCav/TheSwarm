@@ -43,7 +43,7 @@ function CopyDot(dotIndex, copyDot, offspring) {
   population.dots[dotIndex].color = TweakColor(copyDot.color);
 
   do {
-    let r = (Math.random() * 13) + 12;
+    let r = (Math.random() * 25) + 25;
     const a = Math.random() * 6.28;
     population.dots[dotIndex].x = Math.floor(r * Math.cos(a) + copyDot.x);
     population.dots[dotIndex].y = Math.floor(r * Math.sin(a) + copyDot.y);
@@ -110,14 +110,14 @@ function Killed(dotIndex) {
     const dy = population.dots[dotIndex].y - population.dots[dotIndex].nearestDot.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
     if (distance < 1) {
-      population.dots[dotIndex].energy -= (population.dots[dotIndex].nearestDot.energy * 0.1);
+      population.dots[dotIndex].energy -= population.dots[dotIndex].nearestDot.energy; // * 0.1);
       //if (population.dots[dotIndex].energy < population.dots[dotIndex].nearestDot.energy) {
       if (population.dots[dotIndex].energy < 0) {
         //population.dots[dotIndex].energy = -2;
         population.dots[dotIndex].dead = true;
       } else {
         population.dots[dotIndex].dotsEaten++;
-        population.dots[dotIndex].energy += 5;//population.dots[dotIndex].nearestDot.energy;
+        population.dots[dotIndex].energy += 20;//population.dots[dotIndex].nearestDot.energy;
       }
     }
   }

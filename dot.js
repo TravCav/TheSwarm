@@ -21,7 +21,7 @@ class Dot {
     this.dead = false;
     this.children = 0;
     this.generation = 0;
-    this.nearbyDistance = 2500;
+    this.nearbyDistance = 25;
     this.nearbyDotCount = 0;
     this.wantBabby = true;
     this.dotsEaten = 0;
