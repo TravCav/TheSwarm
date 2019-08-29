@@ -1,6 +1,8 @@
 class Brain {
   constructor() {
     this.layers = [];
+    this.layers.push(new Array(22));
+    this.layers.push(new Array(21));
     this.layers.push(new Array(20));
     this.layers.push(new Array(19));
     this.layers.push(new Array(18));

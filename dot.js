@@ -22,14 +22,16 @@ class Dot {
     this.children = 0;
     this.generation = 0;
     this.nearbyDistance = 25;
-    this.nearbyDotCount = 0;
+    ////this.nearbyDotCount = 0;
     this.wantBabby = true;
     this.dotsEaten = 0;
   }
 
   CheckDots(pop) {
     let smallestdistance = 100000000;
-    this.nearbyDotCount = 0;
+    ////this.nearbyDotCount = 0;
+    this.nearby = {x:0, y:0, count:0};
+
     for (
       let closeIndex = 0; closeIndex < pop.dots.length; closeIndex++
     ) {
@@ -37,7 +39,10 @@ class Dot {
         // check closeness
         const distance = this.GetDistance(pop.dots[closeIndex]);
         if (distance < this.nearbyDistance) {
-          this.nearbyDotCount++;
+          ////this.nearbyDotCount++;
+          this.nearby.x += pop.dots[closeIndex].x;
+          this.nearby.y += pop.dots[closeIndex].y;
+          this.nearby.count++;
         }
 
         if (distance < smallestdistance) {
@@ -45,6 +50,10 @@ class Dot {
           this.nearestDot = pop.dots[closeIndex];
         }
       }
+    }
+    if (this.nearby.count > 0) {
+      this.nearby.x = this.nearby.x / this.nearby.count;
+      this.nearby.y = this.nearby.y / this.nearby.count;
     }
   }
 
@@ -138,8 +147,17 @@ class Dot {
 
     // what's around me
     this.brain.layers[0].push({
-      value: this.nearbyDotCount
+      value: this.nearby.count
     });
+    
+    this.brain.layers[0].push({
+      value: this.nearby.x - this.x
+    });
+    
+    this.brain.layers[0].push({
+      value: this.nearby.y - this.y
+    });
+    
   }
 
   ThinkAboutStuff(cWidth, cHeight) {
