@@ -1,8 +1,6 @@
 class Brain {
   constructor() {
     this.layers = [];
-    // First layer is for inputs.    
-    this.layers.push(new Array(20));
     this.layers.push(new Array(19));
     this.layers.push(new Array(18));
     this.layers.push(new Array(17));
@@ -13,6 +11,7 @@ class Brain {
     this.layers.push(new Array(12));
     this.layers.push(new Array(11));
     this.layers.push(new Array(10));
+    this.layers.push(new Array(9));
     this.layers.push(new Array(8));
 
     // fill layers
