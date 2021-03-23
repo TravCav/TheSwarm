@@ -1,16 +1,16 @@
 class Dot {
-  constructor(group) {
+  constructor() {
     this.vector = {
       x: 0,
       y: 0
     };
     this.color = {
-      r: 96, // Math.floor(Math.random() * 256), //127 + Math.floor(Math.random() * 127),
-      g: 96, // Math.floor(Math.random() * 256), //127 + Math.floor(Math.random() * 127),
-      b: 96, // Math.floor(Math.random() * 256) //127 + Math.floor(Math.random() * 127)
+      r: 127, 
+      g: 127, 
+      b: 127, 
     };
     this.age = 0;
-    this.energy = Math.random() * 10;
+    this.energy = 10;
     this.tickRate = 0.02;
     this.nearestDot = null;
     this.nearestFood = null;
@@ -21,15 +21,13 @@ class Dot {
     this.consumed = false;
     this.children = 0;
     this.generation = 0;
-    this.nearbyDistance = 25;
+    this.nearbyDistance = 50;
     this.nearbyDotCount = 0;
-    //this.wantBabby = true;
-    this.dotsEaten = 0;
-    this.group = group |  Math.random();
   }
 
   CheckDots(pop) {
     let smallestdistance = 100000000;
+    let smallestfooddistance = 100000000;
     this.nearbyDotCount = 0;
     for (
       let closeIndex = 0; closeIndex < pop.dots.length; closeIndex++
@@ -41,9 +39,14 @@ class Dot {
           this.nearbyDotCount++;
         }
 
-        if (distance < smallestdistance && this.group != pop.dots[closeIndex].group) {
+        if (distance < smallestdistance) {
           smallestdistance = distance;
           this.nearestDot = pop.dots[closeIndex];
+        }
+        
+        if (distance < smallestfooddistance && this.energy > pop.dots[closeIndex].energy) {
+          smallestfooddistance = distance;
+          this.nearestFood = pop.dots[closeIndex];
         }
       }
     }
@@ -58,21 +61,17 @@ class Dot {
       this.color.r = this.ColorBoundCheck(dotToCopy.color.r + Math.floor((Math.random() * 32) - 16));
       this.color.g = this.ColorBoundCheck(dotToCopy.color.g + Math.floor((Math.random() * 32) - 16));
       this.color.b = this.ColorBoundCheck(dotToCopy.color.b + Math.floor((Math.random() * 32) - 16));
-    } while (this.color.r < 96 || this.color.g < 96 || this.color.b < 96);
+    } while (this.color.r + this.color.g + this.color.b < 127);
   }
 
   ColorBoundCheck(color) {
-    if (color > 255) {
-      return 255;
-    }
-    if (color < 0) {
-      return 0;
-    }
+    if (color > 255) { return 255; }
+    if (color < 0) { return 0; }
     return color;
   }
 
   Consumed() {
-    if (this.nearestDot !== null && this.nearestDot.group != this.group) {
+    if (this.nearestDot !== null) {
       const dx = this.x - this.nearestDot.x;
       const dy = this.y - this.nearestDot.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -82,8 +81,9 @@ class Dot {
           this.consumed = true;
           return true;
         } else {
-          this.dotsEaten++;
+          this.children++;
           this.energy += this.nearestDot.energy;
+
           return false;
         }
       }
@@ -103,17 +103,14 @@ class Dot {
     this.ThinkAboutStuff(cWidth, cHeight);
     let lastLayerIndex = this.brain.layers.length - 1;
     let lastLayer = this.brain.layers[lastLayerIndex];
-    let vectorModifier = 1; // - (this.age * 0.001);
+    let vectorModifier = 0.1;
     this.vector.x += ((lastLayer[5].value + lastLayer[6].value + lastLayer[7].value) - (lastLayer[0].value + lastLayer[1].value + lastLayer[2].value)) / 3;
     this.vector.y += ((lastLayer[2].value + lastLayer[4].value + lastLayer[7].value) - (lastLayer[0].value + lastLayer[3].value + lastLayer[5].value)) / 3;
     this.x += (this.vector.x * vectorModifier);
     this.y += (this.vector.y * vectorModifier);
 
     const lastVector = Math.sqrt(this.vector.x * this.vector.x + this.vector.y * this.vector.y) / 1000;
-    this.energy -= this.tickRate + lastVector; // + (this.age/10000);
-    //this.energy -= (lastVector  * (1 + (this.age/10000))) + (this.age/10000);
-    //this.energy -= this.tickRate + (this.tickRate / this.age) + (lastVector  * (1 + (this.age/1000)));// + (this.age/10000);
-    //this.wantBabby = (lastLayer[8].value > 0);
+    this.energy -= this.tickRate + lastVector;
     this.age++;
   }
 
@@ -129,7 +126,7 @@ class Dot {
 
     // previous outputs
     let outputLayer = this.brain.layers.length - 1;
-    let outputLayerLen = this.brain.layers[outputLayer].length;
+    let outputLayerLen = this.brain.layers[outputLayer].length
     for (let index = 0; index < outputLayerLen; index++) {
       this.brain.layers[0].push({
         value: this.brain.layers[outputLayer][index].value
@@ -171,40 +168,68 @@ class Dot {
       this.brain.layers[0].push({
         value: Math.abs(this.color.b - this.nearestDot.color.b)
       });
-
-      this.brain.layers[0].push({
-        value: (this.group === this.nearestDot.group) ? 1: -1
-      });
-
     } else {
       // can't see anything.
+      this.brain.layers[0].push({ value: 0 });
+      this.brain.layers[0].push({ value: 0 });
+      this.brain.layers[0].push({ value: 0 });
+      this.brain.layers[0].push({ value: 0 });
+      this.brain.layers[0].push({ value: 0 });
+      this.brain.layers[0].push({ value: 0 });
+    }
+
+        // closest dot that it can see. if any.
+    if (this.nearestFood != null &&  (this.GetDistance(this.nearestFood) < this.nearbyDistance * 2)) {
       this.brain.layers[0].push({
-        value: 0
+        value: this.nearestFood.x - this.x
       });
       this.brain.layers[0].push({
-        value: 0
+        value: this.nearestFood.y - this.y
       });
-      this.brain.layers[0].push({
-        value: 0
-      });
-      this.brain.layers[0].push({
-        value: 0
-      });
-      this.brain.layers[0].push({
-        value: 0
-      });
-      this.brain.layers[0].push({
-        value: 0
-      });
-      this.brain.layers[0].push({
-        value: 0
-      });
+      
+    } else {
+      // can't see anything.
+      this.brain.layers[0].push({ value: 0 });
+      this.brain.layers[0].push({ value: 0 });
     }
 
     // what's around me
     this.brain.layers[0].push({
       value: this.nearbyDotCount
     });
+
+    // // const canvasH = cHeight * 2;
+    // // const canvasW = cWidth * 2;
+    // // // near the left edge.
+    // // this.brain.layers[0].push({
+    // //   value: this.x > this.nearbyDistance ? 0 : this.nearbyDistance - this.x
+    // // });
+
+    // // // near the right edge.
+    // // this.brain.layers[0].push({
+    // //   value: (canvasW - this.x) > this.nearbyDistance ? 0 : canvasW - this.x
+    // // });
+
+
+    // // // near the top edge.
+    // // this.brain.layers[0].push({
+    // //   value: this.y > this.nearbyDistance ? 0 : this.nearbyDistance - this.y
+    // // });
+
+    // // // near the bottom edge.
+    // // this.brain.layers[0].push({
+    // //   value: (canvasH - this.y) > this.nearbyDistance ? 0 : canvasH - this.y
+    // // });
+
+    // // percentage of screen from center. horizontally
+    // this.brain.layers[0].push({
+    //   value: (this.x - cWidth) / cWidth
+    // });
+
+    // // percentage of screen from center. vertically
+    // this.brain.layers[0].push({
+    //   value: (this.y - cHeight) / cHeight
+    // });
 
   }
 
